@@ -1,6 +1,8 @@
 # Gitignore for LobeHub
 ################################################################
 
+./node_modules
+
 # general
 .DS_Store
 .idea
@@ -54,7 +56,7 @@ test-output
 *.tsbuildinfo
 next-env.d.ts
 .next
-.env
+#.env
 public/*.js
 public/sitemap.xml
 public/sitemap-index.xml
