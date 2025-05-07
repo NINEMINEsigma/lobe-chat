@@ -8,14 +8,14 @@ interface WebFaviconProps {
 }
 
 const WebFavicon = ({ url, title, alt, size = 14 }: WebFaviconProps) => {
-  const urlObj = new URL(url);
-  const host = urlObj.hostname;
+  // const urlObj = new URL(url);
+  // const host = urlObj.hostname;
 
   return (
     <Image
       alt={alt || title || url}
       height={size}
-      src={`https://icons.duckduckgo.com/ip3/${host}.ico`}
+      src="/favicon-32x32.ico"
       style={{ borderRadius: 4 }}
       unoptimized
       width={size}
