@@ -17,6 +17,7 @@ import {
   GITHUB,
   MEDIDUM,
   OFFICIAL_SITE,
+  DEPLOYER_SITE,
   PRIVACY_URL,
   TERMS_URL,
   X,
@@ -63,6 +64,11 @@ const Page = memo<{ mobile?: boolean }>(({ mobile }) => {
                 href: OFFICIAL_SITE,
                 label: t('officialSite'),
                 value: 'officialSite',
+              },
+              {
+                href: DEPLOYER_SITE,
+                label: '当前部署者的网站',
+                value: 'deployerSite',
               },
               {
                 href: mailTo(EMAIL_SUPPORT),

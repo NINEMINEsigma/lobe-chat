@@ -7,7 +7,7 @@ export const LOBE_CHAT_CLOUD = 'LobeChat Cloud';
 export const BRANDING_NAME = 'LiubaiChat';
 export const BRANDING_LOGO_URL = '/favicon-32x32.ico';
 
-export const ORG_NAME = 'LobeHub';
+export const ORG_NAME = 'Liubai Design';
 
 export const BRANDING_URL = {
   help: undefined,

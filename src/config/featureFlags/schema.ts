@@ -63,10 +63,10 @@ export const DEFAULT_FEATURE_FLAGS: IFeatureFlags = {
   dalle: true,
 
   check_updates: true,
-  welcome_suggest: true,
+  welcome_suggest: false,
   token_counter: true,
 
-  knowledge_base: true,
+  knowledge_base: false,
   rag_eval: false,
 
   clerk_sign_up: true,

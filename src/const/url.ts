@@ -12,6 +12,7 @@ export const UTM_SOURCE = 'chat_preview';
 export const OFFICIAL_URL = 'https://lobechat.com';
 export const OFFICIAL_PREVIEW_URL = 'https://chat-preview.lobehub.com';
 export const OFFICIAL_SITE = 'https://lobehub.com';
+export const DEPLOYER_SITE = 'https://github.com/NINEMINEsigma';
 
 export const OG_URL = '/og/cover.png?v=1';
 

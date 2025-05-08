@@ -37,7 +37,7 @@ const electron = {
       useSelfHosted: '使用自托管实例？',
     },
     selfHosted: {
-      description: '自行部署的社区版本',
+      description: '私有部署版本',
       title: '自托管实例',
     },
   },

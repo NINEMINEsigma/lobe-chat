@@ -273,7 +273,7 @@
     "support": "邮件支持"
   },
   "oauth": "SSO 登录",
-  "officialSite": "官方网站",
+  "officialSite": "LobeChat的官方网站",
   "ok": "确定",
   "password": "密码",
   "pin": "置顶",
@@ -352,7 +352,7 @@
     "cloud": "体验 {{name}}",
     "community": "社区版",
     "data": "数据存储",
-    "defaultNickname": "社区版用户",
+    "defaultNickname": "用户", 
     "discord": "社区支持",
     "docs": "使用文档",
     "email": "邮件支持",
