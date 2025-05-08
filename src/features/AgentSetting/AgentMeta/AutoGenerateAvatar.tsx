@@ -1,66 +1,78 @@
-import { ActionIcon } from '@lobehub/ui';
-import { useTheme } from 'antd-style';
+import { Avatar, Button, Form, type FormItemProps, Tooltip } from '@lobehub/ui';
+import { Upload } from 'antd';
 import { Wand2 } from 'lucide-react';
-import dynamic from 'next/dynamic';
-import { memo } from 'react';
+import { memo, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Flexbox } from 'react-layout-kit';
 
-import { useGlobalStore } from '@/store/global';
-import { globalGeneralSelectors } from '@/store/global/selectors';
+import { imageToBase64 } from '@/utils/imageToBase64';
+import { createUploadImageHandler } from '@/utils/uploadFIle';
 
-const EmojiPicker = dynamic(() => import('@lobehub/ui/es/EmojiPicker'), { ssr: false });
-
-export interface AutoGenerateAvatarProps {
+interface AutoGenerateAvatarProps {
   background?: string;
   canAutoGenerate?: boolean;
   loading?: boolean;
-  onChange?: (value: string) => void;
   onGenerate?: () => void;
-  value?: string;
+  onChange?: (value: string) => void;
 }
 
 const AutoGenerateAvatar = memo<AutoGenerateAvatarProps>(
-  ({ loading, background, value, onChange, onGenerate, canAutoGenerate }) => {
-    const { t } = useTranslation('common');
-    const theme = useTheme();
-    const locale = useGlobalStore(globalGeneralSelectors.currentLanguage);
+  ({ background, canAutoGenerate, loading, onGenerate, onChange }) => {
+    const { t } = useTranslation(['setting', 'common']);
+
+    const handleUploadAvatar = createUploadImageHandler(async (avatar) => {
+      try {
+        // 准备图像
+        const img = new Image();
+        img.src = avatar;
+
+        // 使用 Promise 等待图片加载
+        await new Promise((resolve, reject) => {
+          img.addEventListener('load', resolve);
+          img.addEventListener('error', reject);
+        });
+
+        // 压缩图像并转换为 base64
+        const webpBase64 = imageToBase64({ img, size: 256 });
+        
+        // 使用 onChange 回调更新值
+        onChange?.(webpBase64);
+      } catch (error) {
+        console.error('Failed to upload avatar:', error);
+      }
+    });
 
     return (
-      <Flexbox
-        align={'center'}
-        flex={'none'}
-        gap={2}
-        horizontal
-        padding={2}
-        style={{
-          background: theme.colorBgContainer,
-          border: `1px solid ${theme.colorBorderSecondary}`,
-          borderRadius: 32,
-          paddingRight: 8,
-          width: 'fit-content',
-        }}
-      >
-        <EmojiPicker
-          background={background || theme.colorFillTertiary}
-          loading={loading}
-          locale={locale}
-          onChange={onChange}
-          size={48}
-          style={{
-            background: theme.colorFillTertiary,
-          }}
-          value={value}
-        />
-        <ActionIcon
-          disabled={!canAutoGenerate}
-          icon={Wand2}
-          loading={loading}
-          onClick={onGenerate}
-          size="small"
-          title={!canAutoGenerate ? t('autoGenerateTooltipDisabled') : t('autoGenerate')}
-        />
-      </Flexbox>
+      <div style={{ display: 'flex', gap: 8 }}>
+        <Form.Item noStyle>
+          <Avatar
+            avatar={<Form.Item name="avatar" noStyle />}
+            background={background}
+            size={64}
+          />
+        </Form.Item>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <Upload beforeUpload={handleUploadAvatar} maxCount={1}>
+            <Button size="small">上传图片</Button>
+          </Upload>
+          <Tooltip
+            title={
+              !canAutoGenerate
+                ? t('common:autoGenerateTooltipDisabled')
+                : t('common:autoGenerateTooltip')
+            }
+          >
+            <Button
+              disabled={!canAutoGenerate}
+              icon={Wand2}
+              loading={loading}
+              onClick={onGenerate}
+              size="small"
+            >
+              {t('common:autoGenerate')}
+            </Button>
+          </Tooltip>
+        </div>
+      </div>
     );
   },
 );

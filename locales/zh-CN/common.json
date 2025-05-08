@@ -24,9 +24,9 @@
     "ready": "数据库已就绪",
     "showDetail": "查看详情"
   },
-  "autoGenerate": "自动补全",
-  "autoGenerateTooltip": "基于角色设定自动补全助手描述",
-  "autoGenerateTooltipDisabled": "请填写角色设定后使用自动补全功能",
+  "autoGenerate": "自动生成",
+  "autoGenerateTooltip": "使用 AI 自动生成",
+  "autoGenerateTooltipDisabled": "请先设置系统角色以启用自动生成",
   "back": "返回",
   "batchDelete": "批量删除",
   "blog": "产品博客",
@@ -364,5 +364,6 @@
     "setting": "应用设置",
     "usages": "用量统计"
   },
-  "version": "版本"
+  "version": "版本",
+  "upload": "上传图片"
 }

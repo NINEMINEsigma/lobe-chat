@@ -19,6 +19,7 @@
     "types": ["vitest/globals", "@serwist/next/typings"],
     "paths": {
       "@/*": ["./src/*"],
+      "@lobehub/*": ["./node_modules/@lobehub/*"],
       "~test-utils": ["./tests/utils.tsx"]
     },
     "plugins": [

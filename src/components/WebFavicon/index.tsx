@@ -15,7 +15,8 @@ const WebFavicon = ({ url, title, alt, size = 14 }: WebFaviconProps) => {
     <Image
       alt={alt || title || url}
       height={size}
-      src="/favicon-32x32.ico"
+      // src={`https://icons.duckduckgo.com/ip3/${host}.ico`}
+      src="/icon/Role Icon.png"
       style={{ borderRadius: 4 }}
       unoptimized
       width={size}

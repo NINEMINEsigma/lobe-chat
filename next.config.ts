@@ -105,15 +105,6 @@ const nextConfig: NextConfig = {
         ],
         source: '/favicon-32x32.ico',
       },
-      {
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-        source: '/apple-touch-icon.png',
-      },
     ];
   },
   logging: {
