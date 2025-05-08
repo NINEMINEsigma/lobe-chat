@@ -360,5 +360,6 @@ export default {
     usages: '用量统计',
   },
   version: '版本',
+  upload: '上传图片',
   editWorkflow: "编辑工作流",
 };

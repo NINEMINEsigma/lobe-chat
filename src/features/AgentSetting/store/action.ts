@@ -187,7 +187,7 @@ export const store: StateCreator<Store, [['zustand/devtools', never]]> = (set, g
       get().autocompleteAgentDescription();
     }
 
-    if (!meta.avatar || replace) {
+    if (!meta.avatar || (replace && /^[\u{1F300}-\u{1F9FF}]/u.test(meta.avatar))) {
       get().autoPickEmoji();
     }
 

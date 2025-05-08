@@ -131,6 +131,7 @@ const Actions = memo<ActionProps>(({ group, id, openCreateGroupModal, setOpen })
             onClick: ({ domEvent }) => {
               domEvent.stopPropagation();
 
+              // Project-Label Workflow
               console.log('workflow');
               //duplicateSession(id);
             },
