@@ -352,7 +352,7 @@
     "cloud": "体验 {{name}}",
     "community": "社区版",
     "data": "数据存储",
-    "defaultNickname": "用户", 
+    "defaultNickname": "用户",
     "discord": "社区支持",
     "docs": "使用文档",
     "email": "邮件支持",
@@ -365,5 +365,6 @@
     "usages": "用量统计"
   },
   "version": "版本",
-  "upload": "上传图片"
+  "upload": "上传图片",
+  "editWorkflow": "编辑工作流"
 }

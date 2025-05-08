@@ -13,6 +13,7 @@ import {
   Pin,
   PinOff,
   Trash,
+  Workflow,
 } from 'lucide-react';
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -119,6 +120,20 @@ const Actions = memo<ActionProps>(({ group, id, openCreateGroupModal, setOpen })
             icon: <Icon icon={ListTree} />,
             key: 'moveGroup',
             label: t('sessionGroup.moveGroup'),
+          },
+          {
+            type: 'divider',
+          },
+          {
+            icon: <Icon icon={Workflow} />,
+            key: 'editWorkflow',
+            label: t('editWorkflow', { ns: 'common' }),
+            onClick: ({ domEvent }) => {
+              domEvent.stopPropagation();
+
+              console.log('workflow');
+              //duplicateSession(id);
+            },
           },
           {
             type: 'divider',

@@ -360,4 +360,5 @@ export default {
     usages: '用量统计',
   },
   version: '版本',
+  editWorkflow: "编辑工作流",
 };
