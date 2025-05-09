@@ -15,6 +15,7 @@ export interface AgentState {
   showAgentSetting: boolean;
   updateAgentChatConfigSignal?: AbortController;
   updateAgentConfigSignal?: AbortController;
+  showAgentWorkflow: boolean;
 }
 
 export const initialAgentChatState: AgentState = {
@@ -24,4 +25,5 @@ export const initialAgentChatState: AgentState = {
   defaultAgentConfig: DEFAULT_AGENT_CONFIG,
   isInboxAgentConfigInit: false,
   showAgentSetting: false,
+  showAgentWorkflow: false,
 };

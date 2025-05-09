@@ -17,6 +17,11 @@ const AgentSettings = dynamic(() => import('./AgentSettings'), {
   ssr: false,
 });
 
+// Project-Label Workflow
+const Workflow = dynamic(() => import('./Workflow'), {
+  ssr: false,
+});
+
 const SettingButton = memo<{ mobile?: boolean }>(({ mobile }) => {
   const hotkey = useUserStore(settingsSelectors.getHotkeyById(HotkeyEnum.OpenChatSettings));
   const { t } = useTranslation('common');
@@ -33,6 +38,7 @@ const SettingButton = memo<{ mobile?: boolean }>(({ mobile }) => {
         />
       </Tooltip>
       <AgentSettings key={id} />
+      <Workflow key={id} />
     </>
   );
 });

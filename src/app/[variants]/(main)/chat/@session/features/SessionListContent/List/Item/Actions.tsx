@@ -25,6 +25,9 @@ import { sessionHelpers } from '@/store/session/helpers';
 import { sessionGroupSelectors, sessionSelectors } from '@/store/session/selectors';
 import { SessionDefaultGroup } from '@/types/session';
 
+// Project-Label
+import { useAgentStore } from '@/store/agent';
+
 const useStyles = createStyles(({ css }) => ({
   modalRoot: css`
     z-index: 2000;
@@ -132,8 +135,7 @@ const Actions = memo<ActionProps>(({ group, id, openCreateGroupModal, setOpen })
               domEvent.stopPropagation();
 
               // Project-Label Workflow
-              console.log('workflow');
-              //duplicateSession(id);
+              useAgentStore.setState({ showAgentWorkflow: true });
             },
           },
           {
