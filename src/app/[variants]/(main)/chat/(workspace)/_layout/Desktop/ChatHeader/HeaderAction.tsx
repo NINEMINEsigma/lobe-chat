@@ -17,6 +17,10 @@ import { HotkeyEnum } from '@/types/hotkey';
 import SettingButton from '../../../features/SettingButton';
 import ShareButton from '../../../features/ShareButton';
 
+// Project-Label Workflow
+// TODO 在这里新增工作流按钮
+//import Workflow
+
 const HeaderAction = memo<{ className?: string }>(({ className }) => {
   const { t } = useTranslation('chat');
   const hotkey = useUserStore(settingsSelectors.getHotkeyById(HotkeyEnum.ToggleRightPanel));

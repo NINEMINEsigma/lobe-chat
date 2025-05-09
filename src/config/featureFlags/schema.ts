@@ -66,6 +66,7 @@ export const DEFAULT_FEATURE_FLAGS: IFeatureFlags = {
   welcome_suggest: false,
   token_counter: true,
 
+  // Project-Label Files
   knowledge_base: false,
   rag_eval: false,
 
