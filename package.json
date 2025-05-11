@@ -20,10 +20,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lobehub/lobe-chat.git"
+    "url": "https://github.com/NINEMINEsigma/lobe-chat.git"
   },
   "license": "MIT",
-  "author": "LobeHub <i@lobehub.com>",
+  "author": "LiuBai <ninemine@qq.com>",
   "sideEffects": false,
   "workspaces": [
     "packages/*"

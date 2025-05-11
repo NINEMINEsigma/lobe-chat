@@ -16,6 +16,7 @@ const Layout = ServerLayout({ Desktop, Mobile });
 const Session = (props: DynamicLayoutProps) => {
   return (
     <Suspense fallback={<CircleLoading />}>
+
       <Layout {...props}>
         <Suspense fallback={<SkeletonList />}>
           <SessionListContent />
