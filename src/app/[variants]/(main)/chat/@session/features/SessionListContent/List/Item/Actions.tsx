@@ -127,16 +127,16 @@ const Actions = memo<ActionProps>(({ group, id, openCreateGroupModal, setOpen })
           {
             type: 'divider',
           },
-          {
-            icon: <Icon icon={Workflow} />,
-            key: 'editWorkflow',
-            label: t('editWorkflow', { ns: 'common' }),
-            onClick: ({ domEvent }) => {
-              domEvent.stopPropagation();
-              // Project-Label Workflow
-              useAgentStore.setState({ showAgentWorkflow: true });
-            },
-          },
+          // {
+          //   icon: <Icon icon={Workflow} />,
+          //   key: 'editWorkflow',
+          //   label: t('editWorkflow', { ns: 'common' }),
+          //   onClick: ({ domEvent }) => {
+          //     domEvent.stopPropagation();
+          //     // Project-Label Workflow
+          //     useAgentStore.setState({ showAgentWorkflow: true });
+          //   },
+          // },
           {
             type: 'divider',
           },

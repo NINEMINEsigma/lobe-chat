@@ -4,6 +4,7 @@ import { Drawer } from '@lobehub/ui';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Flexbox } from 'react-layout-kit';
+import dynamic from 'next/dynamic';
 
 import { useAgentStore } from '@/store/agent';
 import PanelTitle from '@/components/PanelTitle';
@@ -28,4 +29,4 @@ const WorkflowDrawer = memo(() => {
   );
 });
 
-export default WorkflowDrawer; 
+export { WorkflowDrawer };
