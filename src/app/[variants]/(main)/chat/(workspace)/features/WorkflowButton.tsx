@@ -6,19 +6,17 @@ import { useTranslation } from 'react-i18next';
 import dynamic from 'next/dynamic';
 
 import { useSessionStore } from '@/store/session';
+import { useAgentStore } from '@/store/agent';
 
 import { Workflow } from 'lucide-react';
 
 import { DESKTOP_HEADER_ICON_SIZE, MOBILE_HEADER_ICON_SIZE } from '@/const/layoutTokens';
-import { useWorkspaceModal } from '@/hooks/useWorkspaceModal';
 
-interface WorkflowButtonProps {
-  mobile?: boolean;
-  open?: boolean;
-  setOpen?: (open: boolean) => void;
-}
+const AgentWorkflow = dynamic(() => import('./AgentWorkflow'), {
+  ssr: false,
+});
 
-const WorkflowButton = memo<WorkflowButtonProps>(({ mobile, setOpen, open }) => {
+const WorkflowButton = memo<{ mobile?: boolean }>(({ mobile }) => {
   const { t } = useTranslation('common');
   
   const id = useSessionStore((s) => s.activeId);
@@ -27,10 +25,11 @@ const WorkflowButton = memo<WorkflowButtonProps>(({ mobile, setOpen, open }) => 
     <>
       <ActionIcon
         icon={Workflow}
-        onClick={() => /* Project-Label Workflow */console.log('workflow')}
+        onClick={() => /* Project-Label Workflow */useAgentStore.setState({ showAgentWorkflow: true })}
         size={mobile ? MOBILE_HEADER_ICON_SIZE : DESKTOP_HEADER_ICON_SIZE}
         title={t('editWorkflow')}
       />
+      <AgentWorkflow key={id} />
     </>
   );
 });

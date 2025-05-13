@@ -4,14 +4,15 @@ import { Drawer } from '@lobehub/ui';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Flexbox } from 'react-layout-kit';
-import dynamic from 'next/dynamic';
 
 import { useAgentStore } from '@/store/agent';
 import PanelTitle from '@/components/PanelTitle';
+import { useSessionStore } from '@/store/session';
 
 const WorkflowDrawer = memo(() => {
   const { t } = useTranslation('common');
   const [showAgentWorkflow] = useAgentStore((s) => [s.showAgentWorkflow]);
+  const id = useSessionStore((s) => s.activeId);
 
   return (
     <Drawer
@@ -29,4 +30,4 @@ const WorkflowDrawer = memo(() => {
   );
 });
 
-export { WorkflowDrawer };
+export default WorkflowDrawer;
