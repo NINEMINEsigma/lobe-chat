@@ -362,4 +362,10 @@ export default {
   version: '版本',
   upload: '上传图片',
   editWorkflow: "编辑工作流",
+  workflow: {
+    addNode: "添加节点",
+    save: "保存",
+    import: "导入",
+    export: "导出"
+  }
 };
