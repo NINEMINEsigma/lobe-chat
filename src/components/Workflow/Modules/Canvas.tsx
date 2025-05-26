@@ -1,21 +1,17 @@
-import { 
-  Background, 
-  Controls, 
+import {
+  Background,
+  Controls,
   ReactFlow,
   ReactFlowProvider,
   addEdge,
-  useNodesState,
-  useEdgesState,
-  useReactFlow,
   Connection,
   Edge,
   Node,
-  NodeChange,
-  EdgeChange,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { createStyles } from 'antd-style';
+import { createStyles, useTheme } from 'antd-style';
 import { memo, useCallback, useRef } from 'react';
+import { LobeAgentWorkflowNode } from '@/types/agent/workflow';
 
 const useStyles = createStyles(({ css, token, isDarkMode }) => ({
   container: css`
@@ -23,42 +19,53 @@ const useStyles = createStyles(({ css, token, isDarkMode }) => ({
     height: 100%;
   `,
   flow: css`
-    background: ${token.colorBgLayout};
+    background: ${isDarkMode ? '#1a1a1a' : token.colorBgLayout};
+    transition: background-color 0.3s ease;
   `,
   node: css`
-    background: ${token.colorBgElevated};
-    border: 1px solid ${token.colorBorderSecondary};
+    background: ${isDarkMode ? '#2a2a2a' : token.colorBgElevated};
+    border: 1px solid ${isDarkMode ? '#404040' : token.colorBorderSecondary};
     border-radius: ${token.borderRadius}px;
     padding: ${token.padding}px;
-    color: ${token.colorText};
+    color: ${isDarkMode ? '#ffffff' : token.colorText};
+    transition: all 0.3s ease;
 
     &:hover {
-      border-color: ${token.colorPrimary};
+      border-color: ${isDarkMode ? '#1890ff' : token.colorPrimary};
+      background: ${isDarkMode ? '#333333' : token.colorBgElevated};
+      transform: translateY(-2px);
+      box-shadow: ${isDarkMode
+        ? '0 4px 12px rgba(24, 144, 255, 0.3)'
+        : token.boxShadow};
     }
 
     &.selected {
-      border-color: ${token.colorPrimary};
-      box-shadow: ${token.boxShadow};
+      border-color: ${isDarkMode ? '#1890ff' : token.colorPrimary};
+      box-shadow: ${isDarkMode
+        ? '0 0 0 2px rgba(24, 144, 255, 0.2)'
+        : token.boxShadow};
+      background: ${isDarkMode ? '#333333' : token.colorBgElevated};
     }
   `,
 }));
 
-let id = 0;
-const getId = () => `node_${id++}`;
+interface WorkflowCanvasProps {
+  nodes: LobeAgentWorkflowNode[];
+  edges: Edge[];
+  onNodesChange: (nodes: Node[], edges: Edge[]) => void;
+}
 
-type CustomNode = Node<{ label: string }>;
-type CustomEdge = Edge;
-
-const WorkflowCanvas = memo(() => {
+const WorkflowCanvas = memo<WorkflowCanvasProps>(({ nodes, edges, onNodesChange }) => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState<CustomNode>([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState<CustomEdge>([]);
-  const { screenToFlowPosition } = useReactFlow();
   const { styles, theme } = useStyles();
+  const { isDarkMode } = useTheme();
 
   const onConnect = useCallback(
-    (params: Connection) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
+    (params: Connection) => {
+      const newEdges = addEdge(params, edges);
+      onNodesChange(nodes, newEdges);
+    },
+    [edges, nodes, onNodesChange]
   );
 
   const onDragOver = useCallback((event: React.DragEvent) => {
@@ -77,22 +84,21 @@ const WorkflowCanvas = memo(() => {
         return;
       }
 
-      const position = screenToFlowPosition({
+      const position = {
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
-      });
+      };
 
-      const newNode: CustomNode = {
-        id: getId(),
+      const newNode: LobeAgentWorkflowNode = {
+        id: `node_${nodes.length + 1}`,
         type,
         position,
         data: { label: `${type} node` },
-        className: styles.node,
       };
 
-      setNodes((nds) => nds.concat(newNode));
+      onNodesChange([...nodes, newNode], edges);
     },
-    [screenToFlowPosition, styles.node]
+    [nodes, edges, onNodesChange]
   );
 
   return (
@@ -100,25 +106,23 @@ const WorkflowCanvas = memo(() => {
       <ReactFlow
         nodes={nodes}
         edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onDragOver={onDragOver}
         onDrop={onDrop}
         fitView
         className={styles.flow}
       >
-        <Background color={theme.colorTextQuaternary} />
+        <Background color={isDarkMode ? '#404040' : theme.colorTextQuaternary} />
         <Controls />
       </ReactFlow>
     </div>
   );
 });
 
-const WrappedWorkflowCanvas = memo(() => (
+const WrappedWorkflowCanvas = memo<WorkflowCanvasProps>((props) => (
   <ReactFlowProvider>
-    <WorkflowCanvas />
+    <WorkflowCanvas {...props} />
   </ReactFlowProvider>
 ));
 
-export default WrappedWorkflowCanvas; 
+export default WrappedWorkflowCanvas;
