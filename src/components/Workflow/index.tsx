@@ -2,8 +2,9 @@
 
 import { memo, useEffect } from 'react';
 import { Flexbox } from 'react-layout-kit';
-import { Edge, Node } from '@xyflow/react';
+import { Edge } from '@xyflow/react';
 import { useAgentStore } from '@/store/agent';
+import { LobeAgentWorkflowNode } from '@/types/agent/workflow';
 
 import WorkflowNodes from './Modules/Nodes';
 import WorkflowCanvas from './Modules/Canvas';
@@ -14,13 +15,14 @@ interface WorkflowProps {
 }
 
 const Workflow = memo<WorkflowProps>(({ id }) => {
-  const { currentWorkflow, loadWorkflow, updateWorkflow } = useAgentStore();
+  const { currentWorkflow, loadWorkflow, updateWorkflow, resetWorkflow } = useAgentStore();
 
   useEffect(() => {
+    resetWorkflow();
     loadWorkflow(id);
-  }, [id, loadWorkflow]);
+  }, [id, loadWorkflow, resetWorkflow]);
 
-  const onWorkflowChange = (nodes: Node[], edges: Edge[]) => {
+  const onWorkflowChange = (nodes: LobeAgentWorkflowNode[], edges: Edge[]) => {
     updateWorkflow({
       nodes,
       edges,

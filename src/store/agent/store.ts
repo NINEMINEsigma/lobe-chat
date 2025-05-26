@@ -14,7 +14,7 @@ export interface AgentStore extends WorkflowState, WorkflowActions, AgentChatAct
 const createStore: StateCreator<AgentStore, [['zustand/devtools', never]]> = (...parameters) => ({
   ...initialState,
   ...createChatSlice(...parameters),
-  ...createWorkflowSlice(),
+  ...createWorkflowSlice(...parameters),
 });
 
 //  ===============  implement useStore ============ //

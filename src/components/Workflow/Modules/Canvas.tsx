@@ -7,6 +7,11 @@ import {
   Connection,
   Edge,
   Node,
+  NodeChange,
+  EdgeChange,
+  applyNodeChanges,
+  applyEdgeChanges,
+  useReactFlow,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { createStyles, useTheme } from 'antd-style';
@@ -52,13 +57,14 @@ const useStyles = createStyles(({ css, token, isDarkMode }) => ({
 interface WorkflowCanvasProps {
   nodes: LobeAgentWorkflowNode[];
   edges: Edge[];
-  onNodesChange: (nodes: Node[], edges: Edge[]) => void;
+  onNodesChange: (nodes: LobeAgentWorkflowNode[], edges: Edge[]) => void;
 }
 
 const WorkflowCanvas = memo<WorkflowCanvasProps>(({ nodes, edges, onNodesChange }) => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const { styles, theme } = useStyles();
   const { isDarkMode } = useTheme();
+  const { screenToFlowPosition } = useReactFlow();
 
   const onConnect = useCallback(
     (params: Connection) => {
@@ -66,6 +72,22 @@ const WorkflowCanvas = memo<WorkflowCanvasProps>(({ nodes, edges, onNodesChange 
       onNodesChange(nodes, newEdges);
     },
     [edges, nodes, onNodesChange]
+  );
+
+  const handleNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      const updatedNodes = applyNodeChanges(changes, nodes) as LobeAgentWorkflowNode[];
+      onNodesChange(updatedNodes, edges);
+    },
+    [nodes, edges, onNodesChange]
+  );
+
+  const handleEdgesChange = useCallback(
+    (changes: EdgeChange[]) => {
+      const updatedEdges = applyEdgeChanges(changes, edges);
+      onNodesChange(nodes, updatedEdges);
+    },
+    [nodes, edges, onNodesChange]
   );
 
   const onDragOver = useCallback((event: React.DragEvent) => {
@@ -78,16 +100,16 @@ const WorkflowCanvas = memo<WorkflowCanvasProps>(({ nodes, edges, onNodesChange 
       event.preventDefault();
 
       const reactFlowBounds = reactFlowWrapper.current?.getBoundingClientRect();
-      const type = event.dataTransfer.getData('application/reactflow');
+      const type = event.dataTransfer.getData('application/reactflow') as LobeAgentWorkflowNode['type'];
 
-      if (typeof type === 'undefined' || !type || !reactFlowBounds) {
+      if (!type || !reactFlowBounds) {
         return;
       }
 
-      const position = {
-        x: event.clientX - reactFlowBounds.left,
-        y: event.clientY - reactFlowBounds.top,
-      };
+      const position = screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
 
       const newNode: LobeAgentWorkflowNode = {
         id: `node_${nodes.length + 1}`,
@@ -98,7 +120,7 @@ const WorkflowCanvas = memo<WorkflowCanvasProps>(({ nodes, edges, onNodesChange 
 
       onNodesChange([...nodes, newNode], edges);
     },
-    [nodes, edges, onNodesChange]
+    [nodes, edges, onNodesChange, screenToFlowPosition]
   );
 
   return (
@@ -106,6 +128,8 @@ const WorkflowCanvas = memo<WorkflowCanvasProps>(({ nodes, edges, onNodesChange 
       <ReactFlow
         nodes={nodes}
         edges={edges}
+        onNodesChange={handleNodesChange}
+        onEdgesChange={handleEdgesChange}
         onConnect={onConnect}
         onDragOver={onDragOver}
         onDrop={onDrop}

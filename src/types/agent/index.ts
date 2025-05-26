@@ -1,6 +1,7 @@
 import { FileItem } from '@/types/files';
 import { KnowledgeBaseItem } from '@/types/knowledgeBase';
 import { FewShots, LLMParams } from '@/types/llm';
+import { LobeAgentWorkflow } from './workflow';
 
 import { LobeAgentChatConfig } from './chatConfig';
 
@@ -64,6 +65,30 @@ export interface LobeAgentConfig {
    * 语音服务
    */
   tts: LobeAgentTTSConfig;
+
+  /**
+   * 工作流配置
+   */
+  workflow?: {
+    /**
+     * 工作流定义
+     */
+    definition: LobeAgentWorkflow;
+    /**
+     * 工作流状态
+     */
+    status?: 'active' | 'inactive';
+    /**
+     * 工作流元数据
+     */
+    meta?: {
+      name?: string;
+      description?: string;
+      tags?: string[];
+      createdAt?: string;
+      updatedAt?: string;
+    };
+  };
 }
 
 export type LobeAgentConfigKeys =
