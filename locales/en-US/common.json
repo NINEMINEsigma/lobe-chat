@@ -364,5 +364,25 @@
     "setting": "Settings",
     "usages": "Usage Statistics"
   },
-  "version": "Version"
+  "version": "Version",
+  "workflow": {
+    "addNode": "Add Node",
+    "save": "Save",
+    "import": "Import",
+    "export": "Export",
+    "nodes": {
+      "agent": "Agent",
+      "agentDesc": "Configure and use intelligent agent",
+      "chat": "Chat Node",
+      "chatDesc": "Interact with chat",
+      "function": "Function Node",
+      "functionDesc": "Execute custom functions",
+      "input": "Input Node",
+      "inputDesc": "Process input data",
+      "llm": "Language Model",
+      "llmDesc": "Call large language models",
+      "settings": "Settings Node",
+      "settingsDesc": "Configure workflow settings"
+    }
+  }
 }

@@ -364,5 +364,25 @@
     "setting": "アプリ設定",
     "usages": "利用量統計"
   },
-  "version": "バージョン"
+  "version": "バージョン",
+  "workflow": {
+    "addNode": "ノードを追加",
+    "save": "保存",
+    "import": "インポート",
+    "export": "エクスポート",
+    "nodes": {
+      "agent": "エージェント",
+      "agentDesc": "インテリジェントエージェントの設定と使用",
+      "chat": "チャットノード",
+      "chatDesc": "チャットでのインタラクション",
+      "function": "ファンクションノード",
+      "functionDesc": "カスタム関数を実行",
+      "input": "入力ノード",
+      "inputDesc": "入力データの処理",
+      "llm": "言語モデル",
+      "llmDesc": "大規模言語モデルを呼び出す",
+      "settings": "設定ノード",
+      "settingsDesc": "ワークフローの設定"
+    }
+  }
 }

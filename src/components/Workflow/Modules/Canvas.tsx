@@ -17,6 +17,8 @@ import '@xyflow/react/dist/style.css';
 import { createStyles, useTheme } from 'antd-style';
 import { memo, useCallback, useRef } from 'react';
 import { LobeAgentWorkflowNode } from '@/types/agent/workflow';
+import { useTranslation } from 'react-i18next';
+import CustomNode from './CustomNode';
 
 const useStyles = createStyles(({ css, token, isDarkMode }) => ({
   container: css`
@@ -60,11 +62,21 @@ interface WorkflowCanvasProps {
   onNodesChange: (nodes: LobeAgentWorkflowNode[], edges: Edge[]) => void;
 }
 
+const nodeTypes = {
+  agent: CustomNode,
+  chat: CustomNode,
+  function: CustomNode,
+  input: CustomNode,
+  llm: CustomNode,
+  settings: CustomNode,
+};
+
 const WorkflowCanvas = memo<WorkflowCanvasProps>(({ nodes, edges, onNodesChange }) => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const { styles, theme } = useStyles();
   const { isDarkMode } = useTheme();
   const { screenToFlowPosition } = useReactFlow();
+  const { t } = useTranslation('common');
 
   const onConnect = useCallback(
     (params: Connection) => {
@@ -115,7 +127,10 @@ const WorkflowCanvas = memo<WorkflowCanvasProps>(({ nodes, edges, onNodesChange 
         id: `node_${nodes.length + 1}`,
         type,
         position,
-        data: { label: `${type} node` },
+        data: {
+          labelKey: `workflow.nodes.${type}`,
+          descriptionKey: `workflow.nodes.${type}Desc`
+        },
       };
 
       onNodesChange([...nodes, newNode], edges);
@@ -133,6 +148,7 @@ const WorkflowCanvas = memo<WorkflowCanvasProps>(({ nodes, edges, onNodesChange 
         onConnect={onConnect}
         onDragOver={onDragOver}
         onDrop={onDrop}
+        nodeTypes={nodeTypes}
         fitView
         className={styles.flow}
       >

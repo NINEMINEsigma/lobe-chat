@@ -364,5 +364,25 @@
     "setting": "앱 설정",
     "usages": "사용량 통계"
   },
-  "version": "버전"
+  "version": "버전",
+  "workflow": {
+    "addNode": "노드 추가",
+    "save": "저장",
+    "import": "가져오기",
+    "export": "내보내기",
+    "nodes": {
+      "agent": "에이전트",
+      "agentDesc": "지능형 에이전트 구성 및 사용",
+      "chat": "채팅 노드",
+      "chatDesc": "채팅 상호작용",
+      "function": "함수 노드",
+      "functionDesc": "사용자 정의 함수 실행",
+      "input": "입력 노드",
+      "inputDesc": "입력 데이터 처리",
+      "llm": "언어 모델",
+      "llmDesc": "대규모 언어 모델 호출",
+      "settings": "설정 노드",
+      "settingsDesc": "워크플로우 설정"
+    }
+  }
 }

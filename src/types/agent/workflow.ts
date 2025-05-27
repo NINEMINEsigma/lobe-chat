@@ -5,7 +5,8 @@ export interface LobeAgentWorkflowNode {
   type: 'agent' | 'chat' | 'function' | 'input' | 'llm' | 'settings';
   position: { x: number; y: number };
   data: {
-    label: string;
+    labelKey: string;
+    descriptionKey: string;
     config?: any;
   };
 }
