@@ -1,0 +1,59 @@
+.nodeSelectorModal {
+  .searchContainer {
+    margin-bottom: 16px;
+  }
+
+  .nodeList {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .categorySection {
+    margin-bottom: 24px;
+
+    .categoryTitle {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+  }
+
+  .nodeCard {
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid #d9d9d9;
+
+    &:hover {
+      border-color: #1677ff;
+      box-shadow: 0 2px 8px rgba(22, 119, 255, 0.15);
+    }
+
+    .nodeIcon {
+      font-size: 24px;
+      color: #1677ff;
+      margin-bottom: 8px;
+    }
+
+    .nodeName {
+      font-size: 12px;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .nodeDescription {
+      font-size: 11px;
+      color: #666;
+      line-height: 1.4;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+  }
+}

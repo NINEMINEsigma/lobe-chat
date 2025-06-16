@@ -2,6 +2,7 @@ import { FileItem } from '@/types/files';
 import { KnowledgeBaseItem } from '@/types/knowledgeBase';
 import { FewShots, LLMParams } from '@/types/llm';
 import { LobeAgentWorkflow } from './workflow';
+import { LobeFlowData } from './flowmix';
 
 import { LobeAgentChatConfig } from './chatConfig';
 
@@ -67,13 +68,18 @@ export interface LobeAgentConfig {
   tts: LobeAgentTTSConfig;
 
   /**
-   * 工作流配置
+   * 工作流配置 - 支持新旧两种格式
    */
   workflow?: {
     /**
-     * 工作流定义
+     * 工作流定义 - 新格式(FlowmixFlow)
      */
-    definition: LobeAgentWorkflow;
+    definition?: LobeFlowData;
+    /**
+     * 工作流定义 - 旧格式(保持兼容)
+     * @deprecated 请使用新的FlowmixFlow格式
+     */
+    legacyDefinition?: LobeAgentWorkflow;
     /**
      * 工作流状态
      */
@@ -87,6 +93,8 @@ export interface LobeAgentConfig {
       tags?: string[];
       createdAt?: string;
       updatedAt?: string;
+      version?: string;
+      isLegacyFormat?: boolean; // 标识是否为旧格式
     };
   };
 }
