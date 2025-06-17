@@ -398,6 +398,7 @@ const FlowmixCanvasInner = memo<FlowmixCanvasProps>(({
         nodeData = {};
       }
 
+      // 使用统一的节点创建逻辑，确保包含正确的nodeType
       const newNode: any = {
         id: `${type}_${Date.now()}`,
         type: 'custom',
@@ -405,6 +406,7 @@ const FlowmixCanvasInner = memo<FlowmixCanvasProps>(({
         data: {
           ...nodeData,
           label: nodeData.label || type,
+          nodeType: type, // ✅ 关键修复：添加正确的nodeType属性
         },
       };
 

@@ -1,12 +1,12 @@
 import { Edge } from '@xyflow/react';
+import { StandardWorkflowNode, NodeType } from '../workflow/nodeTypes';
 
-export interface LobeAgentWorkflowNode {
-  id: string;
-  type: 'agent' | 'chat' | 'function' | 'input' | 'llm' | 'settings';
-  position: { x: number; y: number };
-  data: {
-    labelKey: string;
-    descriptionKey: string;
+// 使用统一的节点类型定义
+export interface LobeAgentWorkflowNode extends StandardWorkflowNode {
+  // 保持向后兼容的额外字段
+  data: StandardWorkflowNode['data'] & {
+    labelKey?: string;
+    descriptionKey?: string;
     config?: any;
   };
 }
@@ -16,6 +16,9 @@ export interface LobeAgentWorkflow {
   edges: Edge[];
   version: string;
 }
+
+// 向后兼容的类型别名
+export type WorkflowNodeType = NodeType;
 
 export interface WorkflowState {
   currentWorkflow?: LobeAgentWorkflow;

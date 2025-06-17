@@ -17,6 +17,7 @@ import {
   RotateCcw,
   Timer
 } from 'lucide-react';
+import { getAllNodeConfigs, NODE_CATEGORIES } from '@/constants/workflow/nodeConfig';
 
 const { Text } = Typography;
 
@@ -243,132 +244,13 @@ const useStyles = createStyles(({ token, css }) => ({
   `
 }));
 
-interface NodeType {
-  id: string;
-  type: string;
-  title: string;
-  description: string;
-  icon: React.ComponentType;
-  category: string;
-}
+// 移除本地接口定义，使用统一的 NodeTypeConfig
 
-const nodeTypes: NodeType[] = [
-  // 基础节点
-  {
-    id: 'input',
-    type: 'input',
-    title: '输入节点',
-    description: '接收用户输入文本',
-    icon: Download,
-    category: 'basic'
-  },
-  {
-    id: 'output',
-    type: 'output',
-    title: '输出节点',
-    description: '输出最终结果',
-    icon: Upload,
-    category: 'basic'
-  },
-  {
-    id: 'chat',
-    type: 'chat',
-    title: '对话节点',
-    description: '处理对话交互',
-    icon: MessageSquare,
-    category: 'basic'
-  },
+// 使用统一的节点配置，移除重复定义
+const nodeTypes = getAllNodeConfigs();
 
-  // AI节点 - 核心节点
-  {
-    id: 'llm',
-    type: 'llm',
-    title: '大模型节点',
-    description: '调用大语言模型处理',
-    icon: Bot,
-    category: 'ai'
-  },
-
-  // TODO: 待扩展的AI节点 - 暂时注释，保留用于后续功能增强
-  // {
-  //   id: 'agent',
-  //   type: 'agent',
-  //   title: '智能体节点',
-  //   description: '智能体代理处理',
-  //   icon: Bot,
-  //   category: 'ai'
-  // },
-
-  // 功能节点
-  {
-    id: 'function',
-    type: 'function',
-    title: '函数节点',
-    description: '执行自定义函数',
-    icon: Code,
-    category: 'function'
-  },
-  {
-    id: 'database',
-    type: 'database',
-    title: '数据库节点',
-    description: '数据库操作',
-    icon: Database,
-    category: 'function'
-  },
-
-  // 控制节点
-  {
-    id: 'condition',
-    type: 'condition',
-    title: '条件节点',
-    description: '条件判断分支',
-    icon: GitBranch,
-    category: 'control'
-  },
-  {
-    id: 'filter',
-    type: 'filter',
-    title: '过滤节点',
-    description: '数据过滤处理',
-    icon: Filter,
-    category: 'control'
-  },
-  {
-    id: 'loop',
-    type: 'loop',
-    title: '循环节点',
-    description: '循环执行处理',
-    icon: RotateCcw,
-    category: 'control'
-  },
-  {
-    id: 'delay',
-    type: 'delay',
-    title: '延时节点',
-    description: '延时等待处理',
-    icon: Timer,
-    category: 'control'
-  },
-
-    // 配置节点
-  {
-    id: 'settings',
-    type: 'settings',
-    title: '设置节点',
-    description: '配置参数设置',
-    icon: Settings,
-    category: 'config'
-  }
-];
-
-const categories = {
-  basic: '基础节点',
-  ai: 'AI节点',
-  function: '功能节点',
-  control: '控制节点',
-  config: '配置节点'
-};
+// 使用统一的分类配置
+const categories = NODE_CATEGORIES;
 
 interface FlowmixNodesProps {
   onNodeDragStart?: (nodeType: string) => void;
@@ -414,18 +296,7 @@ const FlowmixNodes: React.FC<FlowmixNodesProps> = ({ onNodeDragStart }) => {
                     onDragStart={(e) => handleDragStart(e, node.type)}
                   >
                     <div className={styles.nodeIcon}>
-                      {node.type === 'input' ? '📥' :
-                       node.type === 'output' ? '📤' :
-                       node.type === 'chat' ? '💬' :
-                       node.type === 'llm' ? '🤖' :
-                       node.type === 'agent' ? '🤖' :
-                       node.type === 'function' ? '⚙️' :
-                       node.type === 'database' ? '🗃️' :
-                       node.type === 'condition' ? '🔀' :
-                       node.type === 'filter' ? '🔍' :
-                       node.type === 'loop' ? '🔄' :
-                       node.type === 'delay' ? '⏰' :
-                       node.type === 'settings' ? '⚙️' : '📦'}
+                      {node.icon}
                     </div>
                     <div className={styles.nodeContent}>
                       <div className={styles.nodeTitle}>{node.title}</div>

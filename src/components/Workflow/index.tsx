@@ -8,6 +8,7 @@ import '@xyflow/react/dist/style.css';
 
 import { useAgentStore } from '@/store/agent';
 import { LobeFlowData } from '@/types/agent/flowmix';
+import { createDefaultWorkflowTemplate } from '@/constants/workflow/nodeConfig';
 
 import FlowmixCanvas from './Modules/FlowmixCanvas';
 import FlowmixNodes from './Modules/FlowmixNodes';
@@ -146,51 +147,10 @@ const WorkflowInner = memo<WorkflowProps>(({ id }) => {
     }
   }, [saveWorkflow]);
 
-  // 处理创建新工作流 - 使用默认模板
+  // 处理创建新工作流 - 使用统一的默认模板
   const handleCreate = useCallback(() => {
-    // 创建默认的三节点模板：输入-智能体-输出
-    const defaultNodes = [
-      {
-        id: 'input-node',
-        type: 'custom',
-        position: { x: 100, y: 100 },
-        data: {
-          label: '输入节点',
-          nodeType: 'input'
-        }
-      },
-      {
-        id: 'agent-node',
-        type: 'custom',
-        position: { x: 300, y: 100 },
-        data: {
-          label: '智能体节点',
-          nodeType: 'agent'
-        }
-      },
-      {
-        id: 'output-node',
-        type: 'custom',
-        position: { x: 500, y: 100 },
-        data: {
-          label: '输出节点',
-          nodeType: 'output'
-        }
-      }
-    ];
-
-    const defaultEdges = [
-      {
-        id: 'input-to-agent',
-        source: 'input-node',
-        target: 'agent-node'
-      },
-      {
-        id: 'agent-to-output',
-        source: 'agent-node',
-        target: 'output-node'
-      }
-    ];
+    // 使用统一的默认工作流模板创建函数
+    const { nodes: defaultNodes, edges: defaultEdges } = createDefaultWorkflowTemplate();
 
     const newFlow: LobeFlowData = {
       nodes: defaultNodes as any[],

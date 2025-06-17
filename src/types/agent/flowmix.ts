@@ -1,6 +1,7 @@
 import { FlowData, AppNode, AppEdge, ValidationResult, ExecutionResult } from '@/components/FlowmixFlow/core/types';
 import { LobeAgentWorkflow, LobeAgentWorkflowNode } from './workflow';
 import { Edge } from '@xyflow/react';
+import { NodeType } from '../workflow/nodeTypes';
 
 // 扩展的FlowmixFlow数据结构，兼容LobeChat
 export interface LobeFlowData extends FlowData {
@@ -24,12 +25,15 @@ export interface LobeFlowData extends FlowData {
   };
 }
 
-// LobeChat专用的节点类型
+// LobeChat专用的节点类型 - 使用统一类型定义
 export interface LobeFlowNode extends AppNode {
-  type: 'agent' | 'chat' | 'function' | 'input' | 'llm' | 'settings';
+  type: 'custom'; // 统一使用 custom 类型
   data: {
-    labelKey: string;
-    descriptionKey: string;
+    nodeType: NodeType; // 使用统一的节点类型枚举
+    label: string;
+    description?: string;
+    labelKey?: string; // 向后兼容
+    descriptionKey?: string; // 向后兼容
     config?: any;
     // FlowmixFlow特有的数据
     validation?: ValidationResult;
@@ -100,14 +104,11 @@ export interface MigrationResult {
   backupKey?: string;
 }
 
-// 节点类型映射
-export const NODE_TYPE_MAPPING: Record<LobeAgentWorkflowNode['type'], string> = {
-  agent: 'lobe-agent',
-  chat: 'lobe-chat',
-  function: 'lobe-function',
-  input: 'lobe-input',
-  llm: 'lobe-llm',
-  settings: 'lobe-settings'
+// 节点类型映射 - 使用统一的节点类型
+export const NODE_TYPE_MAPPING: Record<NodeType, string> = {
+  [NodeType.AGENT]: 'lobe-agent',
+  [NodeType.INPUT]: 'lobe-input',
+  [NodeType.OUTPUT]: 'lobe-output'
 };
 
 // 默认配置
