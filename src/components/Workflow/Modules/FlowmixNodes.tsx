@@ -258,7 +258,7 @@ const nodeTypes: NodeType[] = [
     id: 'input',
     type: 'input',
     title: '输入节点',
-    description: '接收外部输入数据',
+    description: '接收用户输入文本',
     icon: Download,
     category: 'basic'
   },
@@ -266,7 +266,7 @@ const nodeTypes: NodeType[] = [
     id: 'output',
     type: 'output',
     title: '输出节点',
-    description: '输出处理结果',
+    description: '输出最终结果',
     icon: Upload,
     category: 'basic'
   },
@@ -279,23 +279,25 @@ const nodeTypes: NodeType[] = [
     category: 'basic'
   },
 
-  // AI节点
+  // AI节点 - 核心节点
   {
     id: 'llm',
     type: 'llm',
-    title: 'LLM节点',
-    description: '大语言模型处理',
+    title: '大模型节点',
+    description: '调用大语言模型处理',
     icon: Bot,
     category: 'ai'
   },
-  {
-    id: 'agent',
-    type: 'agent',
-    title: '智能体节点',
-    description: '智能体代理处理',
-    icon: Bot,
-    category: 'ai'
-  },
+
+  // TODO: 待扩展的AI节点 - 暂时注释，保留用于后续功能增强
+  // {
+  //   id: 'agent',
+  //   type: 'agent',
+  //   title: '智能体节点',
+  //   description: '智能体代理处理',
+  //   icon: Bot,
+  //   category: 'ai'
+  // },
 
   // 功能节点
   {

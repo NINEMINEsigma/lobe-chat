@@ -15,9 +15,12 @@ import {
   useEdgesState,
   addEdge,
   Handle,
-  Position
+  Position,
+  Node
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+
+import NodeDetailModal from '@/components/FlowmixFlow/components/NodeDetailModal';
 
 // 临时类型定义
 interface LobeFlowData {
@@ -260,6 +263,15 @@ const FlowmixCanvasInner = memo<FlowmixCanvasProps>(({
   const [edges, setEdges, onEdgesChange] = useEdgesState([] as any[]);
   const [viewport, setViewport] = useState({ x: 0, y: 0, zoom: 1 });
 
+  // 节点详情弹窗状态
+  const [nodeDetailModal, setNodeDetailModal] = useState<{
+    open: boolean;
+    node: Node | null;
+  }>({
+    open: false,
+    node: null
+  });
+
   // 创建防抖的onChange函数
   const debouncedOnChange = useCallback(
     (() => {
@@ -441,6 +453,49 @@ const FlowmixCanvasInner = memo<FlowmixCanvasProps>(({
     [setNodes, debouncedOnChange, getCurrentData]
   );
 
+  // 双击节点事件处理
+  const onNodeDoubleClick = useCallback(
+    (event: React.MouseEvent, node: Node) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      // 打开节点详情弹窗
+      setNodeDetailModal({
+        open: true,
+        node: node
+      });
+    },
+    []
+  );
+
+  // 关闭节点详情弹窗
+  const handleCloseNodeDetail = useCallback(() => {
+    setNodeDetailModal({
+      open: false,
+      node: null
+    });
+  }, []);
+
+  // 保存节点配置
+  const handleSaveNodeConfig = useCallback(
+    (nodeId: string, newData: any) => {
+      setNodes((nds: any[]) =>
+        nds.map((node: any) =>
+          node.id === nodeId
+            ? { ...node, data: { ...node.data, ...newData } }
+            : node
+        )
+      );
+
+      // 通知变更
+      debouncedOnChange(getCurrentData());
+
+      // 显示成功消息
+      message.success('节点配置已保存');
+    },
+    [setNodes, debouncedOnChange, getCurrentData]
+  );
+
   // 性能监控 - 开发环境下启用
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
@@ -462,6 +517,7 @@ const FlowmixCanvasInner = memo<FlowmixCanvasProps>(({
         onConnect={onConnect}
         onDragOver={onDragOver}
         onDrop={onDrop}
+        onNodeDoubleClick={onNodeDoubleClick}
         nodeTypes={nodeTypes}
         defaultViewport={viewport}
         fitView
@@ -483,6 +539,14 @@ const FlowmixCanvasInner = memo<FlowmixCanvasProps>(({
           pannable
         />
       </ReactFlow>
+
+      {/* 节点详情弹窗 */}
+      <NodeDetailModal
+        open={nodeDetailModal.open}
+        node={nodeDetailModal.node}
+        onClose={handleCloseNodeDetail}
+        onSave={handleSaveNodeConfig}
+      />
     </div>
   );
 });

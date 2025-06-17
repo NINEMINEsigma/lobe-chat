@@ -1,6 +1,41 @@
 import React from 'react';
 import { ValidationResult, AppNode, AppEdge, Connection, PluginConfig } from './Common';
 
+// 核心节点数据类型定义
+export interface InputNodeData {
+  nodeType: 'input';
+  outputValue: string;
+  placeholder?: string;
+}
+
+export interface LLMNodeData {
+  nodeType: 'llm';
+  inputValue: string;
+  outputValue: string;
+  modelConfig?: {
+    temperature?: number;
+    maxTokens?: number;
+    // 🚀 FUTURE: 扩展模型配置选项
+    // systemPrompt?: string;
+    // topP?: number;
+    // frequencyPenalty?: number;
+    // presencePenalty?: number;
+  };
+}
+
+export interface OutputNodeData {
+  nodeType: 'output';
+  inputValue: string;
+  // 🚀 FUTURE: 输出格式化配置
+  // displayConfig?: {
+  //   format?: 'text' | 'markdown' | 'json' | 'code';
+  //   syntax?: string;
+  //   template?: string;
+  // };
+}
+
+export type CoreNodeData = InputNodeData | LLMNodeData | OutputNodeData;
+
 // 节点插件配置
 export interface NodePluginConfig {
   id: string;
@@ -59,6 +94,15 @@ export interface NodeContext {
   addEdge: (edge: any) => void;
 }
 
+// 执行上下文（用于节点执行）
+export interface ExecutionContext {
+  sessionId: string;
+  currentUserId: string;
+  userInput: string;
+  nodeOutputs: Map<string, any>;
+  error?: Error;
+}
+
 // 节点插件组件定义
 export interface NodePluginComponent {
   // 节点渲染组件
@@ -85,5 +129,27 @@ export interface NodePlugin {
   // 节点行为定义（可选）
   behaviors?: NodePluginBehaviors;
   // 运行时执行逻辑（可选）
-  executor?: (input: any, config: any) => Promise<any>;
+  executor?: (input: any, config: any, context?: ExecutionContext) => Promise<any>;
 }
+
+// 🚀 FUTURE: 多模态输入支持接口
+// export interface MultiModalInputConfig {
+//   supportedTypes: ('text' | 'image' | 'audio')[];
+//   maxFileSize?: number;
+// }
+
+// 🚀 FUTURE: 高级模型配置接口
+// export interface AdvancedModelConfig {
+//   systemPrompt?: string;
+//   temperature?: number;
+//   topP?: number;
+//   frequencyPenalty?: number;
+//   presencePenalty?: number;
+// }
+
+// 🚀 FUTURE: 输出格式化配置接口
+// export interface OutputFormatConfig {
+//   format: 'text' | 'markdown' | 'json' | 'code';
+//   syntax?: string;
+//   template?: string;
+// }
