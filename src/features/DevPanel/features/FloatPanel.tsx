@@ -87,9 +87,14 @@ const CollapsibleFloatPanel = memo<CollapsibleFloatPanelProps>(({ items }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [position, setPosition] = useState({ x: 100, y: 100 });
   const [size, setSize] = useState({ height: minHeight, width: minWidth });
+  const [isClient, setIsClient] = useState(false);
 
   const pathname = usePathname();
+
   useEffect(() => {
+    // Fix hydration error by ensuring client-side only execution
+    setIsClient(true);
+
     try {
       const localStoragePosition = localStorage.getItem('debug-panel-position');
       if (localStoragePosition && JSON.parse(localStoragePosition)) {
@@ -112,8 +117,8 @@ const CollapsibleFloatPanel = memo<CollapsibleFloatPanelProps>(({ items }) => {
   return (
     <>
       {
-        // desktop devtools 下隐藏
-        pathname !== '/desktop/devtools' && (
+        // Only render on client side to prevent hydration errors
+        isClient && pathname !== '/desktop/devtools' && (
           <FloatButton
             className={styles.floatButton}
             icon={<Icon icon={isExpanded ? BugOff : BugIcon} />}

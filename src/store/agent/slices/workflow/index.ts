@@ -37,46 +37,11 @@ export const createWorkflowSlice: StateCreator<
     workflowMeta: undefined,
 
     loadWorkflow: async (id: string) => {
-      const isLogin = authSelectors.isLogin(useUserStore.getState());
-
       try {
-        // 强制刷新配置以获取最新数据
-        await get().internal_refreshAgentConfig?.(id);
-
-        // 获取最新的服务器数据
-        const response = await get().useFetchAgentConfig(isLogin, id);
-        const serverWorkflow = response?.data?.workflow;
-
         // 获取本地存储数据
         const storedWorkflow = getStoredWorkflow(id);
 
-        // 如果服务器有数据
-        if (serverWorkflow?.definition) {
-          const serverTimestamp = new Date(serverWorkflow.meta?.updatedAt || 0).getTime();
-          const localTimestamp = new Date(storedWorkflow?.meta?.updatedAt || 0).getTime();
-
-          // 使用较新的数据
-          if (!storedWorkflow || serverTimestamp >= localTimestamp) {
-            set(
-              produce((state) => {
-                state.currentWorkflow = serverWorkflow.definition;
-                state.workflowMeta = {
-                  ...serverWorkflow.meta,
-                  status: serverWorkflow.status || 'active',
-                };
-                state.isWorkflowModified = false;
-              }),
-              false,
-              'workflow/load/server',
-            );
-
-            // 同步到本地存储
-            saveWorkflowToStorage(id, serverWorkflow);
-            return;
-          }
-        }
-
-        // 如果本地有数据且比服务器新，使用本地数据
+        // 如果本地有数据，使用本地数据
         if (storedWorkflow) {
           set(
             produce((state) => {
@@ -125,22 +90,33 @@ export const createWorkflowSlice: StateCreator<
       } catch (error) {
         console.error('Failed to load workflow:', error);
 
-        // 如果加载失败，尝试从本地存储恢复
-        const storedWorkflow = getStoredWorkflow(id);
-        if (storedWorkflow) {
-          set(
-            produce((state) => {
-              state.currentWorkflow = storedWorkflow.definition;
-              state.workflowMeta = {
-                ...storedWorkflow.meta,
-                status: storedWorkflow.status || 'active',
-              };
-              state.isWorkflowModified = false;
-            }),
-            false,
-            'workflow/load/storage/fallback',
-          );
-        }
+        // 如果加载失败，创建默认工作流
+        const defaultWorkflow = {
+          definition: {
+            nodes: [],
+            edges: [],
+            version: '1.0',
+          },
+          status: 'active' as const,
+          meta: {
+            name: '默认工作流',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          },
+        };
+
+        set(
+          produce((state) => {
+            state.currentWorkflow = defaultWorkflow.definition;
+            state.workflowMeta = {
+              ...defaultWorkflow.meta,
+              status: defaultWorkflow.status,
+            };
+            state.isWorkflowModified = false;
+          }),
+          false,
+          'workflow/load/fallback',
+        );
       }
     },
 
