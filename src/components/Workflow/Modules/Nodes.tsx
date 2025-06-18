@@ -103,7 +103,7 @@ const WorkflowNodes = memo(() => {
               <Card
                 size="small"
                 className={styles.card}
-                bodyStyle={{ padding: '8px 12px' }}
+                styles={{ body: { padding: '8px 12px' } }}
               >
                 <Flexbox horizontal gap={8} align="center">
                   {item.icon}

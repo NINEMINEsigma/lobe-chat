@@ -114,6 +114,15 @@ const WorkflowInner = memo<WorkflowProps>(({ id }) => {
   // 将旧格式转换为新格式
   useEffect(() => {
     if (currentWorkflow) {
+      console.log('[Workflow] 从store加载工作流数据:', {
+        hasNodes: 'nodes' in currentWorkflow,
+        nodesCount: currentWorkflow.nodes?.length || 0,
+        sampleNode: currentWorkflow.nodes?.[0] || null,
+                nodesWithParameterMappings: currentWorkflow.nodes?.filter((node: any) =>
+          node.data?.parameterMappings && node.data.parameterMappings.length > 0
+        ).length || 0
+      });
+
       // 如果是旧格式，转换为新格式
       if ('nodes' in currentWorkflow && 'edges' in currentWorkflow) {
         const flowData: LobeFlowData = {
@@ -121,6 +130,16 @@ const WorkflowInner = memo<WorkflowProps>(({ id }) => {
           edges: (currentWorkflow.edges || []) as any[],
           viewport: { x: 0, y: 0, zoom: 1 }
         };
+
+        console.log('[Workflow] 转换后的FlowData:', {
+          nodesCount: flowData.nodes.length,
+          edgesCount: flowData.edges.length,
+                    nodesWithParameterMappings: flowData.nodes.filter((node: any) =>
+            node.data?.parameterMappings && node.data.parameterMappings.length > 0
+          ).length,
+          sampleNodeData: flowData.nodes[0]?.data || null
+        });
+
         setWorkflowData(flowData);
       }
     }
@@ -128,6 +147,15 @@ const WorkflowInner = memo<WorkflowProps>(({ id }) => {
 
   // 处理工作流更新
   const handleWorkflowChange = useCallback((data: LobeFlowData) => {
+    console.log('[Workflow] 处理工作流更新:', {
+      nodesCount: data.nodes?.length || 0,
+      edgesCount: data.edges?.length || 0,
+            nodesWithParameterMappings: data.nodes?.filter((node: any) =>
+        node.data?.parameterMappings && node.data.parameterMappings.length > 0
+      ).length || 0,
+      sampleNodeData: data.nodes?.[0]?.data || null
+    });
+
     setWorkflowData(data);
     // 更新到store（转换回旧格式）
     updateWorkflow({

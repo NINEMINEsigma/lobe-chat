@@ -3,6 +3,8 @@
  * 集中管理所有节点类型，确保一致性
  */
 
+import { ParameterMapping } from '@/utils/workflow/multiInputCollector';
+
 // 核心节点类型枚举
 export enum NodeType {
   INPUT = 'input',
@@ -27,6 +29,8 @@ export interface BaseNodeData {
   outputConnections?: string[];
   inputConnectionDetails?: any[];
   outputConnectionDetails?: any[];
+  // 参数映射配置
+  parameterMappings?: ParameterMapping[];
 }
 
 // 输入节点数据

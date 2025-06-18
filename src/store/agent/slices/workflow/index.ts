@@ -43,6 +43,16 @@ export const createWorkflowSlice: StateCreator<
 
         // 如果本地有数据，使用本地数据
         if (storedWorkflow) {
+          console.log('[WorkflowStore] 从localStorage加载工作流:', {
+            agentId: id,
+            storedWorkflow,
+            nodesCount: storedWorkflow.definition?.nodes?.length || 0,
+            nodesWithParameterMappings: storedWorkflow.definition?.nodes?.filter((node: any) =>
+              node.data?.parameterMappings && node.data.parameterMappings.length > 0
+            ).length || 0,
+            sampleNodeData: storedWorkflow.definition?.nodes?.[0]?.data || null
+          });
+
           set(
             produce((state) => {
               state.currentWorkflow = storedWorkflow.definition;
@@ -124,6 +134,17 @@ export const createWorkflowSlice: StateCreator<
       const { activeId } = get();
       if (!activeId) return;
 
+      console.log('[WorkflowStore] 更新工作流到store:', {
+        agentId: activeId,
+        nodesCount: workflow.nodes?.length || 0,
+        edgesCount: workflow.edges?.length || 0,
+        nodesWithParameterMappings: workflow.nodes?.filter((node: any) =>
+          node.data?.parameterMappings && node.data.parameterMappings.length > 0
+        ).length || 0,
+        sampleNodeData: workflow.nodes?.[0]?.data || null,
+        workflow
+      });
+
       set(
         produce((state) => {
           state.currentWorkflow = workflow;
@@ -134,11 +155,22 @@ export const createWorkflowSlice: StateCreator<
       );
 
       // 保存到本地存储
-      saveWorkflowToStorage(activeId, {
+      const dataToSave = {
         definition: workflow,
         status: get().workflowMeta?.status || 'active',
         meta: get().workflowMeta,
+      };
+
+      console.log('[WorkflowStore] 保存数据到localStorage:', {
+        agentId: activeId,
+        dataToSave,
+        nodesInDefinition: dataToSave.definition.nodes?.length || 0,
+        nodesWithParameterMappingsInDefinition: dataToSave.definition.nodes?.filter((node: any) =>
+          node.data?.parameterMappings && node.data.parameterMappings.length > 0
+        ).length || 0
       });
+
+      saveWorkflowToStorage(activeId, dataToSave);
     },
 
     updateWorkflowMeta: (meta: Partial<WorkflowState['workflowMeta']>) => {

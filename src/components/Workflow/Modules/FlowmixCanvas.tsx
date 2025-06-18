@@ -1,7 +1,7 @@
 'use client';
 
 import React, { memo, useRef, useState, useEffect, useCallback } from 'react';
-import { message } from 'antd';
+import { App } from 'antd';
 import { createStyles } from 'antd-style';
 import {
   ReactFlow,
@@ -255,6 +255,7 @@ const FlowmixCanvasInner = memo<FlowmixCanvasProps>(({
   skipProvider = false
 }) => {
   const { styles } = useStyles();
+  const { message } = App.useApp();
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const { screenToFlowPosition } = useReactFlow();
 
@@ -562,12 +563,38 @@ const FlowmixCanvasInner = memo<FlowmixCanvasProps>(({
   // 保存节点配置
   const handleSaveNodeConfig = useCallback(
     (nodeId: string, newData: any) => {
+      console.log('[FlowmixCanvas] 接收节点保存请求:', {
+        nodeId,
+        newDataKeys: Object.keys(newData || {}),
+        hasParameterMappings: !!newData?.parameterMappings,
+        parameterMappingsCount: newData?.parameterMappings?.length || 0,
+        parameterMappings: newData?.parameterMappings,
+        fullNewData: newData
+      });
+
       setNodes((nds: any[]) =>
-        nds.map((node: any) =>
-          node.id === nodeId
-            ? { ...node, data: { ...node.data, ...newData } }
-            : node
-        )
+        nds.map((node: any) => {
+          if (node.id === nodeId) {
+            // 深度合并数据，特别处理parameterMappings
+            const updatedData = {
+              ...node.data,
+              ...newData,
+              // 确保parameterMappings被正确保存
+              parameterMappings: newData?.parameterMappings || node.data?.parameterMappings || []
+            };
+
+            console.log('[FlowmixCanvas] 更新节点数据:', {
+              nodeId,
+              originalParameterMappings: node.data?.parameterMappings,
+              newParameterMappings: newData?.parameterMappings,
+              finalParameterMappings: updatedData.parameterMappings,
+              updatedData
+            });
+
+            return { ...node, data: updatedData };
+          }
+          return node;
+        })
       );
 
       // 通知变更
@@ -575,8 +602,10 @@ const FlowmixCanvasInner = memo<FlowmixCanvasProps>(({
 
       // 显示成功消息
       message.success('节点配置已保存');
+
+      console.log('[FlowmixCanvas] 节点保存完成:', { nodeId });
     },
-    [setNodes, debouncedOnChange, getCurrentData]
+    [setNodes, debouncedOnChange, getCurrentData, message]
   );
 
   // 性能监控 - 开发环境下启用
@@ -629,6 +658,8 @@ const FlowmixCanvasInner = memo<FlowmixCanvasProps>(({
         node={nodeDetailModal.node}
         onClose={handleCloseNodeDetail}
         onSave={handleSaveNodeConfig}
+        allNodes={nodes}
+        allEdges={edges}
       />
     </div>
   );

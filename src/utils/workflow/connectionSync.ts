@@ -105,7 +105,7 @@ export const canNodeExecute = (node: any, edges: Edge[]): boolean => {
 };
 
 /**
- * 数据兼容性处理 - 确保节点包含连接信息字段
+ * 数据兼容性处理 - 确保节点包含连接信息字段和参数映射字段
  */
 export const ensureNodeConnectionFields = (node: any): any => {
   return {
@@ -116,7 +116,9 @@ export const ensureNodeConnectionFields = (node: any): any => {
       inputConnections: node.data?.inputConnections || [],
       outputConnections: node.data?.outputConnections || [],
       inputConnectionDetails: node.data?.inputConnectionDetails || [],
-      outputConnectionDetails: node.data?.outputConnectionDetails || []
+      outputConnectionDetails: node.data?.outputConnectionDetails || [],
+      // 确保参数映射字段存在
+      parameterMappings: node.data?.parameterMappings || []
     }
   };
 };

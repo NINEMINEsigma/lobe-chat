@@ -30,13 +30,96 @@ export enum InputMergeStrategy {
   TEMPLATE = 'template'       // 模板替换
 }
 
-// 参数映射配置
+// 参数发现配置
+export interface NodeParameterSchema {
+  name: string;                 // 参数名称
+  type: string;                // 参数类型 (string, number, boolean, object)
+  description?: string;        // 参数描述
+  required: boolean;           // 是否必需
+  defaultValue?: any;          // 默认值
+  enumValues?: string[];       // 枚举值（如果是枚举类型）
+}
+
+// 可视化连接点配置
+export interface ParameterConnectionPoint {
+  nodeId: string;              // 节点ID
+  parameterName: string;       // 参数名称
+  parameterType: string;       // 参数类型
+  isInput: boolean;            // 是否为输入参数
+  direction: 'input' | 'output'; // 参数方向
+  position?: { x: number; y: number }; // 连接点位置
+}
+
+// 可视化参数绑定配置
+export interface VisualParameterBinding {
+  sourceConnectionPoint: ParameterConnectionPoint;  // 源连接点（上游节点输出参数）
+  targetConnectionPoint: ParameterConnectionPoint;  // 目标连接点（当前节点输入参数）
+  bindingType: 'direct' | 'transformed';           // 绑定类型：直接绑定或经过转换
+  transformExpression?: string;                     // 转换表达式（如果需要）
+  isCompatible: boolean;                            // 参数类型是否兼容
+  confidence: number;                               // 绑定推荐置信度 (0-1)
+  dataFlow: 'output_to_input';                      // 数据流向标识
+}
+
+// 参数映射配置（扩展现有接口）
 export interface ParameterMapping {
   parameterName: string;       // 参数名称
   sourceNodeId: string;        // 源节点ID
   sourceHandle?: string;       // 源节点输出端口
   required: boolean;           // 是否必需
   defaultValue?: string;       // 默认值
+
+  // 新增可视化绑定支持
+  sourceParameterName?: string;      // 源节点的具体参数名称
+  visualBinding?: VisualParameterBinding;  // 可视化绑定配置
+  availableParameters?: NodeParameterSchema[]; // 可用参数列表
+  lastUpdated?: number;             // 最后更新时间戳
+  bindingMode?: 'manual' | 'auto'; // 绑定模式：手动或自动
+}
+
+// 类型守卫：验证参数映射数据结构
+export function isValidParameterMapping(obj: any): obj is ParameterMapping {
+  return (
+    obj &&
+    typeof obj === 'object' &&
+    typeof obj.parameterName === 'string' &&
+    typeof obj.sourceNodeId === 'string' &&
+    (obj.sourceHandle === undefined || typeof obj.sourceHandle === 'string') &&
+    typeof obj.required === 'boolean' &&
+    (obj.defaultValue === undefined || typeof obj.defaultValue === 'string') &&
+    // 新字段验证 - 这些都是可选的
+    (obj.sourceParameterName === undefined || typeof obj.sourceParameterName === 'string') &&
+    (obj.lastUpdated === undefined || typeof obj.lastUpdated === 'number') &&
+    (obj.bindingMode === undefined || ['auto', 'manual'].includes(obj.bindingMode)) &&
+    // visualBinding 是可选的复杂对象，不进行深度验证以避免保存失败
+    (obj.visualBinding === undefined || typeof obj.visualBinding === 'object') &&
+    // availableParameters 是可选的数组，不进行深度验证
+    (obj.availableParameters === undefined || Array.isArray(obj.availableParameters))
+  );
+}
+
+// 验证参数映射数组
+export function validateParameterMappings(mappings: any): ParameterMapping[] {
+  if (!Array.isArray(mappings)) {
+    console.warn('[multiInputCollector] 参数映射不是数组，返回空数组');
+    return [];
+  }
+
+  const validMappings = mappings.filter((mapping, index) => {
+    const isValid = isValidParameterMapping(mapping);
+    if (!isValid) {
+      console.warn(`[multiInputCollector] 第${index}个参数映射无效:`, mapping);
+    }
+    return isValid;
+  });
+
+  console.log('[multiInputCollector] 参数映射验证结果:', {
+    original: mappings.length,
+    valid: validMappings.length,
+    validMappings
+  });
+
+  return validMappings;
 }
 
 // 多输入配置接口

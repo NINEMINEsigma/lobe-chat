@@ -1,7 +1,7 @@
 'use client';
 
 import React, { memo, useState, useEffect, useCallback } from 'react';
-import { Modal, Tabs, Button, Space, Typography, Divider } from 'antd';
+import { Modal, Tabs, Button, Space, Typography, Divider, App } from 'antd';
 import { createStyles } from 'antd-style';
 import { useTranslation } from 'react-i18next';
 import { CloseOutlined, SaveOutlined, ReloadOutlined } from '@ant-design/icons';
@@ -13,6 +13,8 @@ import NodeBasicInfo from './components/NodeBasicInfo';
 import NodeInputPanel from './components/NodeInputPanel';
 import NodeOutputPanel from './components/NodeOutputPanel';
 import NodeConfigPanel from './components/NodeConfigPanel';
+import VisualBindingPanel from '../../shared/ParameterBinding/VisualBindingPanel';
+import { ParameterMapping, validateParameterMappings } from '@/utils/workflow/multiInputCollector';
 
 const { Title } = Typography;
 
@@ -23,11 +25,14 @@ export interface NodeDetailModalProps {
   onClose: () => void;
   onSave: (nodeId: string, data: any) => void;
   executionContext?: ExecutionContext;
+  // 新增：工作流上下文数据
+  allNodes?: AppNode[];
+  allEdges?: any[];
 }
 
 // 节点详情弹窗状态接口
 interface NodeDetailModalState {
-  activeTab: 'basic' | 'input' | 'output' | 'config';
+  activeTab: 'basic' | 'input' | 'output' | 'config' | 'parameterBinding';
   nodeData: any;
   isModified: boolean;
   validationErrors: string[];
@@ -123,10 +128,13 @@ const NodeDetailModal: React.FC<NodeDetailModalProps> = memo(({
   node,
   onClose,
   onSave,
-  executionContext
+  executionContext,
+  allNodes = [],
+  allEdges = []
 }) => {
   const { styles } = useStyles();
   const { t } = useTranslation('workflow');
+  const { modal } = App.useApp();
 
   // 状态管理
   const [state, setState] = useState<NodeDetailModalState>({
@@ -139,9 +147,27 @@ const NodeDetailModal: React.FC<NodeDetailModalProps> = memo(({
   // 初始化节点数据
   useEffect(() => {
     if (node && open) {
+            // 深拷贝节点数据，确保parameterMappings正确初始化
+      const rawParameterMappings = node.data?.parameterMappings || [];
+      const validParameterMappings = validateParameterMappings(rawParameterMappings);
+
+      const initialNodeData = {
+        ...node.data,
+        // 确保parameterMappings字段存在并且数据有效
+        parameterMappings: validParameterMappings
+      };
+
+      console.log('[NodeDetailModal] 初始化节点数据:', {
+        nodeId: node.id,
+        nodeType: node.data?.nodeType || node.type,
+        hasParameterMappings: !!node.data?.parameterMappings,
+        parameterMappingsCount: node.data?.parameterMappings?.length || 0,
+        initialNodeData: initialNodeData
+      });
+
       setState(prev => ({
         ...prev,
-        nodeData: { ...node.data },
+        nodeData: initialNodeData,
         isModified: false,
         validationErrors: []
       }));
@@ -210,8 +236,26 @@ const NodeDetailModal: React.FC<NodeDetailModalProps> = memo(({
       return; // 验证失败，不保存
     }
 
-    onSave(node.id, state.nodeData);
+    // 确保parameterMappings数据完整性
+    const validParameterMappings = validateParameterMappings(state.nodeData.parameterMappings || []);
+    const dataToSave = {
+      ...state.nodeData,
+      parameterMappings: validParameterMappings
+    };
+
+    console.log('[NodeDetailModal] 保存节点数据:', {
+      nodeId: node.id,
+      nodeType: node.data?.nodeType || node.type,
+      parameterMappingsCount: dataToSave.parameterMappings.length,
+      parameterMappings: dataToSave.parameterMappings,
+      fullData: dataToSave
+    });
+
+    onSave(node.id, dataToSave);
     setState(prev => ({ ...prev, isModified: false }));
+
+    // 验证保存后的状态
+    console.log('[NodeDetailModal] 保存完成，状态重置为未修改');
   }, [node, state.nodeData, onSave, validateData]);
 
   // 重置处理
@@ -229,7 +273,7 @@ const NodeDetailModal: React.FC<NodeDetailModalProps> = memo(({
   // 关闭处理
   const handleClose = useCallback(() => {
     if (state.isModified) {
-      Modal.confirm({
+      modal.confirm({
         title: t('nodeDetail.confirmClose.title'),
         content: t('nodeDetail.confirmClose.content'),
         okText: t('nodeDetail.actions.save'),
@@ -245,7 +289,20 @@ const NodeDetailModal: React.FC<NodeDetailModalProps> = memo(({
     } else {
       onClose();
     }
-  }, [state.isModified, handleSave, onClose, t]);
+  }, [state.isModified, handleSave, onClose, t, modal]);
+
+  // 参数映射变化处理
+  const handleParameterMappingsChange = useCallback((mappings: ParameterMapping[]) => {
+    console.log('[NodeDetailModal] 参数映射变化:', {
+      nodeId: node?.id,
+      nodeType: node?.data?.nodeType || node?.type,
+      previousCount: state.nodeData.parameterMappings?.length || 0,
+      newCount: mappings.length,
+      mappings: mappings
+    });
+
+    handleDataChange('parameterMappings', mappings);
+  }, [handleDataChange, node?.id, node?.data?.nodeType, node?.type, state.nodeData.parameterMappings]);
 
   // Tab配置
   const tabItems = [
@@ -302,6 +359,25 @@ const NodeDetailModal: React.FC<NodeDetailModalProps> = memo(({
             onChange={handleDataChange}
             executionContext={executionContext}
           />
+        </div>
+      )
+    },
+    {
+      key: 'parameterBinding',
+      label: '参数绑定',
+      children: (
+        <div className={styles.tabContent}>
+          {node && (
+            <VisualBindingPanel
+              currentNode={node}
+              allNodes={allNodes}
+              allEdges={allEdges}
+              parameterMappings={state.nodeData.parameterMappings || []}
+              onParameterMappingsChange={handleParameterMappingsChange}
+              readonly={false}
+              title="节点参数绑定"
+            />
+          )}
         </div>
       )
     }
