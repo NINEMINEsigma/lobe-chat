@@ -22,6 +22,11 @@ export interface BaseNodeData {
   nodeType: NodeType;
   description?: string;
   config?: any;
+  // 连接信息
+  inputConnections?: string[];
+  outputConnections?: string[];
+  inputConnectionDetails?: any[];
+  outputConnectionDetails?: any[];
 }
 
 // 输入节点数据

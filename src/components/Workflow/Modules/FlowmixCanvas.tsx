@@ -266,27 +266,36 @@ const FlowmixCanvasInner = memo<FlowmixCanvasProps>(({
   // 节点详情弹窗状态
   const [nodeDetailModal, setNodeDetailModal] = useState<{
     open: boolean;
-    node: Node | null;
+    node: any | null;
   }>({
     open: false,
     node: null
   });
 
-  // 创建防抖的onChange函数
+  // 创建防抖的onChange函数，使用useRef管理定时器
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const debouncedOnChange = useCallback(
-    (() => {
-      let timeoutId: NodeJS.Timeout;
-      return (data: LobeFlowData) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          if (onChange) {
-            onChange(data);
-          }
-        }, 150); // 150ms防抖延迟
-      };
-    })(),
+    (data: LobeFlowData) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      timeoutRef.current = setTimeout(() => {
+        if (onChange) {
+          onChange(data);
+        }
+      }, 300); // 增加到300ms防抖延迟，减少频繁更新
+    },
     [onChange]
   );
+
+  // 组件卸载时清理定时器
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   // 获取当前状态的函数，避免闭包问题
   const getCurrentData = useCallback((): LobeFlowData => ({
@@ -294,6 +303,10 @@ const FlowmixCanvasInner = memo<FlowmixCanvasProps>(({
     edges: edges as any[],
     viewport
   }), [nodes, edges, viewport]);
+
+  // 使用ref存储onChange回调，避免依赖变化
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
 
   // 初始化数据 - 保持节点的所有属性，特别是measured
   useEffect(() => {
@@ -307,26 +320,95 @@ const FlowmixCanvasInner = memo<FlowmixCanvasProps>(({
       })) : [];
       const edgesCopy = initialData.edges ? JSON.parse(JSON.stringify(initialData.edges)) : [];
 
-      setNodes(nodesCopy);
-      setEdges(edgesCopy);
+      // 检查是否需要数据迁移
+      const { needsDataMigration, initializeWorkflowData } = require('@/utils/workflow/connectionSync');
+      const needsMigration = needsDataMigration(nodesCopy);
+
+      if (needsMigration) {
+        console.log('检测到历史数据，正在进行连接信息迁移...');
+      }
+
+      // 完整的数据初始化处理 - 兼容性处理 + 连接同步
+      const { nodes: initializedNodes, edges: initializedEdges } = initializeWorkflowData(nodesCopy, edgesCopy);
+
+      setNodes(initializedNodes);
+      setEdges(initializedEdges);
 
       if (initialData.viewport) {
         setViewport({ ...initialData.viewport });
       }
+
+      // 如果进行了数据迁移，延迟通知上层组件保存（避免循环）
+      if (needsMigration && onChangeRef.current) {
+        const timeoutId = setTimeout(() => {
+          onChangeRef.current?.({
+            nodes: initializedNodes,
+            edges: initializedEdges,
+            viewport: initialData.viewport || { x: 0, y: 0, zoom: 1 }
+          });
+        }, 200);
+
+        // 清理定时器
+        return () => clearTimeout(timeoutId);
+      }
     }
   }, [initialData, setNodes, setEdges]);
 
-  // 处理连接
+    // 独立的连接同步effect - 当节点或边发生变化时同步连接信息
+  useEffect(() => {
+    try {
+      if (nodes.length > 0 && edges.length >= 0) {
+        // 检查是否有孤立的边（连接到不存在的节点）
+        const nodeIds = new Set(nodes.map((node: any) => node.id));
+        const validEdges = edges.filter((edge: any) =>
+          nodeIds.has(edge.source) && nodeIds.has(edge.target)
+        );
+
+        // 如果有无效边，清理它们
+        if (validEdges.length !== edges.length) {
+          setEdges(validEdges);
+          return; // 下次effect会处理连接同步
+        }
+
+        const { updateAllNodesConnections } = require('@/utils/workflow/connectionSync');
+        const updatedNodes = updateAllNodesConnections(nodes, edges);
+
+        // 检查是否需要更新（避免不必要的重新渲染）
+        const needsUpdate = updatedNodes.some((updatedNode: any, index: number) => {
+          const currentNode = nodes[index];
+          if (!currentNode) return true;
+
+          const currentInputCount = currentNode.data?.inputConnections?.length || 0;
+          const updatedInputCount = updatedNode.data?.inputConnections?.length || 0;
+          const currentOutputCount = currentNode.data?.outputConnections?.length || 0;
+          const updatedOutputCount = updatedNode.data?.outputConnections?.length || 0;
+
+          return currentInputCount !== updatedInputCount || currentOutputCount !== updatedOutputCount;
+        });
+
+        if (needsUpdate) {
+          setNodes(updatedNodes);
+        }
+      }
+    } catch (error) {
+      console.error('连接同步过程中发生错误:', error);
+      // 错误时不进行任何状态更新，避免无限循环
+    }
+  }, [edges, nodes.length]); // 监听edges和节点数量变化
+
+  // 处理连接 - 简化逻辑，连接同步由独立的effect处理
   const onConnect = useCallback(
     (params: any) => {
       if (!editable) return;
 
-      setEdges((eds: any) => addEdge(params, eds));
+      // 添加边
+      const newEdges = addEdge(params, edges);
+      setEdges(newEdges);
 
-      // 通知变更
+      // 通知变更（连接信息同步由独立的effect处理）
       debouncedOnChange(getCurrentData());
     },
-    [editable, setEdges, debouncedOnChange, getCurrentData]
+    [editable, setEdges, edges, debouncedOnChange, getCurrentData]
   );
 
   // 删除节点
@@ -356,13 +438,12 @@ const FlowmixCanvasInner = memo<FlowmixCanvasProps>(({
     [editable, onNodesChange, debouncedOnChange, getCurrentData]
   );
 
-  // 优化边更改处理
+  // 优化边更改处理 - 简化逻辑避免嵌套状态更新
   const handleEdgesChange = useCallback(
     (changes: any[]) => {
       if (editable) {
         onEdgesChange(changes);
-
-        // 延迟通知变更
+        // 延迟通知变更，避免频繁更新
         debouncedOnChange(getCurrentData());
       }
     },

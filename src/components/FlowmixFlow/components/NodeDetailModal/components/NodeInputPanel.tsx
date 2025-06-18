@@ -170,7 +170,7 @@ const NodeInputPanel: React.FC<NodeInputPanelProps> = memo(({
 
   // 检查输入连接状态
   const getInputConnectionStatus = () => {
-    const hasConnection = node.data?.inputConnections?.length > 0;
+    const hasConnection = (node.data?.inputConnections?.length || 0) > 0;
     const currentNodeType = getNodeType(node);
     const isInputNode = currentNodeType === 'input';
 
@@ -341,7 +341,7 @@ const NodeInputPanel: React.FC<NodeInputPanelProps> = memo(({
         </Card>
 
         {/* 连接提示信息 */}
-        {node.type !== 'input' && !node.data?.inputConnections?.length && (
+        {node.type !== 'input' && !(node.data?.inputConnections?.length || 0) && (
           <Alert
             message={t('nodeDetail.input.connectionRequired')}
             description={t('nodeDetail.input.connectionRequiredDesc')}

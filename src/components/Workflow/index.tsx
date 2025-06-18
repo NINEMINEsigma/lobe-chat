@@ -152,16 +152,20 @@ const WorkflowInner = memo<WorkflowProps>(({ id }) => {
     // 使用统一的默认工作流模板创建函数
     const { nodes: defaultNodes, edges: defaultEdges } = createDefaultWorkflowTemplate();
 
+    // 确保新创建的模板也有正确的连接信息
+    const { initializeWorkflowData } = require('@/utils/workflow/connectionSync');
+    const { nodes: initializedNodes, edges: initializedEdges } = initializeWorkflowData(defaultNodes, defaultEdges);
+
     const newFlow: LobeFlowData = {
-      nodes: defaultNodes as any[],
-      edges: defaultEdges as any[],
+      nodes: initializedNodes as any[],
+      edges: initializedEdges as any[],
       viewport: { x: 0, y: 0, zoom: 1 }
     };
 
     setWorkflowData(newFlow);
     updateWorkflow({
-      nodes: defaultNodes as any[],
-      edges: defaultEdges as any[],
+      nodes: initializedNodes as any[],
+      edges: initializedEdges as any[],
       version: '1.0'
     });
     updateWorkflowMeta({

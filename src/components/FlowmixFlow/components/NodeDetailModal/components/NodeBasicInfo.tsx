@@ -152,6 +152,24 @@ const NodeBasicInfo: React.FC<NodeBasicInfoProps> = memo(({
 
   const currentNodeType = getNodeType(node);
   const nodeStatus = getNodeStatus();
+
+  // 获取连接数量的函数
+  const getConnectionCount = (type: 'input' | 'output'): number => {
+    if (type === 'input') {
+      return node.data?.inputConnections?.length || 0;
+    }
+    return node.data?.outputConnections?.length || 0;
+  };
+
+  // 检查节点是否可以执行
+  const canExecute = (): boolean => {
+    // 输入节点不需要输入连接
+    if (currentNodeType === 'input') {
+      return true;
+    }
+    // 其他节点需要至少一个输入连接
+    return getConnectionCount('input') > 0;
+  };
   const statusInfo = getStatusInfo(nodeStatus);
   const typeInfo = getNodeTypeInfo(currentNodeType);
 
@@ -306,11 +324,11 @@ const NodeBasicInfo: React.FC<NodeBasicInfoProps> = memo(({
             <Row gutter={16}>
               <Col span={12}>
                 <Text strong>{t('nodeDetail.basic.inputConnections')}: </Text>
-                <Badge count={node.data?.inputConnections?.length || 0} showZero />
+                <Badge count={getConnectionCount('input')} showZero />
               </Col>
               <Col span={12}>
                 <Text strong>{t('nodeDetail.basic.outputConnections')}: </Text>
-                <Badge count={node.data?.outputConnections?.length || 0} showZero />
+                <Badge count={getConnectionCount('output')} showZero />
               </Col>
             </Row>
 
@@ -319,12 +337,8 @@ const NodeBasicInfo: React.FC<NodeBasicInfoProps> = memo(({
                 {t('nodeDetail.basic.canExecute')}:
               </Text>
               <Badge
-                status={currentNodeType === 'input' || (node.data?.inputConnections?.length > 0) ? 'success' : 'error'}
-                text={
-                  currentNodeType === 'input' || (node.data?.inputConnections?.length > 0)
-                    ? t('common.yes')
-                    : t('common.no')
-                }
+                status={canExecute() ? 'success' : 'error'}
+                text={canExecute() ? t('common.yes') : t('common.no')}
               />
             </div>
           </div>

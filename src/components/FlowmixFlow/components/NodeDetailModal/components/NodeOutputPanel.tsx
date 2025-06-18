@@ -202,7 +202,7 @@ const NodeOutputPanel: React.FC<NodeOutputPanelProps> = memo(({
 
   // 检查输出连接状态
   const getOutputConnectionStatus = () => {
-    const hasConnection = node.data?.outputConnections?.length > 0;
+    const hasConnection = (node.data?.outputConnections?.length || 0) > 0;
     const currentNodeType = getNodeType(node);
     const isOutputNode = currentNodeType === 'output';
 
@@ -456,13 +456,13 @@ const NodeOutputPanel: React.FC<NodeOutputPanelProps> = memo(({
             }
             size="small"
           >
-            {node.data?.outputConnections?.length > 0 ? (
+            {(node.data?.outputConnections?.length || 0) > 0 ? (
               <div>
                 <Text>
-                  {t('nodeDetail.output.connectedTo')} {node.data.outputConnections.length} {t('nodeDetail.output.nodes')}
+                  {t('nodeDetail.output.connectedTo')} {node.data?.outputConnections?.length || 0} {t('nodeDetail.output.nodes')}
                 </Text>
                 <div style={{ marginTop: 8 }}>
-                  {node.data.outputConnections.map((connectionId: string, index: number) => (
+                  {(node.data?.outputConnections || []).map((connectionId: string, index: number) => (
                     <Tag key={index} style={{ marginBottom: 4 }}>
                       {connectionId}
                     </Tag>

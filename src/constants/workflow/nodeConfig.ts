@@ -59,7 +59,11 @@ export const createInputNode = (id: string, position: { x: number; y: number }):
       nodeType: NodeType.INPUT,
       description: config.description,
       outputValue: '',
-      placeholder: '请输入内容...'
+      placeholder: '请输入内容...',
+      inputConnections: [],
+      outputConnections: [],
+      inputConnectionDetails: [],
+      outputConnectionDetails: []
     } as InputNodeData
   };
 };
@@ -80,7 +84,11 @@ export const createAgentNode = (id: string, position: { x: number; y: number }):
         temperature: 0.7,
         maxTokens: 2000,
         systemPrompt: ''
-      }
+      },
+      inputConnections: [],
+      outputConnections: [],
+      inputConnectionDetails: [],
+      outputConnectionDetails: []
     } as AgentNodeData
   };
 };
@@ -99,7 +107,11 @@ export const createOutputNode = (id: string, position: { x: number; y: number })
       displayConfig: {
         format: 'text',
         template: ''
-      }
+      },
+      inputConnections: [],
+      outputConnections: [],
+      inputConnectionDetails: [],
+      outputConnectionDetails: []
     } as OutputNodeData
   };
 };
