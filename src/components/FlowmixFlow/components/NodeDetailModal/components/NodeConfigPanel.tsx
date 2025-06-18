@@ -26,6 +26,8 @@ import {
 
 import { AppNode } from '../../../core/types/Common';
 import { ExecutionContext } from '../../../core/types/NodePlugin';
+import MultiInputConfigPanel from './MultiInputConfigPanel';
+import { getDefaultMultiInputConfig } from '@/utils/workflow/multiInputCollector';
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
@@ -122,6 +124,19 @@ const NodeConfigPanel: React.FC<NodeConfigPanelProps> = memo(({
   const getNodeType = (node: AppNode | null): string => {
     if (!node) return 'unknown';
     return node.data?.nodeType || node.type || 'unknown';
+  };
+
+  // 获取可用的上游节点
+  const getAvailableUpstreamNodes = () => {
+    if (!node || !node.data?.inputConnectionDetails) {
+      return [];
+    }
+
+    return node.data.inputConnectionDetails.map((connection: any) => ({
+      id: connection.sourceNodeId,
+      label: connection.sourceNodeLabel || connection.sourceNodeId,
+      type: connection.sourceNodeType || 'unknown'
+    }));
   };
 
   // 渲染输入节点配置
@@ -284,68 +299,77 @@ const NodeConfigPanel: React.FC<NodeConfigPanelProps> = memo(({
 
   // 渲染输出节点配置
   const renderOutputNodeConfig = () => (
-    <div className={styles.configSection}>
-      <Title level={5}>
-        <Space>
-          <ThunderboltOutlined />
-          {t('nodeDetail.config.outputConfig')}
-        </Space>
-      </Title>
+    <>
+      {/* 多输入配置面板 */}
+      <MultiInputConfigPanel
+        config={data?.multiInputConfig || getDefaultMultiInputConfig()}
+        onChange={(config) => onChange('multiInputConfig', config)}
+        availableNodes={getAvailableUpstreamNodes()}
+      />
 
-      <Form layout="vertical" className={styles.formItem}>
-        <Form.Item
-          label={t('nodeDetail.config.displayFormat')}
-          help={t('nodeDetail.config.displayFormatHelp')}
-        >
-          <Select
-            value={data?.displayConfig?.format || 'text'}
-            onChange={(value) => onChange('displayConfig', {
-              ...data?.displayConfig,
-              format: value
-            })}
-            style={{ width: '100%' }}
+      <div className={styles.configSection}>
+        <Title level={5}>
+          <Space>
+            <ThunderboltOutlined />
+            {t('nodeDetail.config.outputConfig')}
+          </Space>
+        </Title>
+
+        <Form layout="vertical" className={styles.formItem}>
+          <Form.Item
+            label={t('nodeDetail.config.displayFormat')}
+            help={t('nodeDetail.config.displayFormatHelp')}
           >
-            <Option value="text">{t('nodeDetail.config.formats.text')}</Option>
-            <Option value="markdown" disabled>{t('nodeDetail.config.formats.markdown')}</Option>
-            <Option value="json" disabled>{t('nodeDetail.config.formats.json')}</Option>
-            <Option value="code" disabled>{t('nodeDetail.config.formats.code')}</Option>
-          </Select>
-          {data?.displayConfig?.format !== 'text' && (
-            <Alert
-              message={t('nodeDetail.config.featureComingSoon')}
-              type="info"
-              style={{ marginTop: 8 }}
+            <Select
+              value={data?.displayConfig?.format || 'text'}
+              onChange={(value) => onChange('displayConfig', {
+                ...data?.displayConfig,
+                format: value
+              })}
+              style={{ width: '100%' }}
+            >
+              <Option value="text">{t('nodeDetail.config.formats.text')}</Option>
+              <Option value="markdown" disabled>{t('nodeDetail.config.formats.markdown')}</Option>
+              <Option value="json" disabled>{t('nodeDetail.config.formats.json')}</Option>
+              <Option value="code" disabled>{t('nodeDetail.config.formats.code')}</Option>
+            </Select>
+            {data?.displayConfig?.format !== 'text' && (
+              <Alert
+                message={t('nodeDetail.config.featureComingSoon')}
+                type="info"
+                style={{ marginTop: 8 }}
+              />
+            )}
+          </Form.Item>
+
+          <Form.Item
+            label={t('nodeDetail.config.autoScroll')}
+            help={t('nodeDetail.config.autoScrollHelp')}
+          >
+            <Switch
+              checked={data?.displayConfig?.autoScroll !== false}
+              onChange={(checked) => onChange('displayConfig', {
+                ...data?.displayConfig,
+                autoScroll: checked
+              })}
             />
-          )}
-        </Form.Item>
+          </Form.Item>
 
-        <Form.Item
-          label={t('nodeDetail.config.autoScroll')}
-          help={t('nodeDetail.config.autoScrollHelp')}
-        >
-          <Switch
-            checked={data?.displayConfig?.autoScroll !== false}
-            onChange={(checked) => onChange('displayConfig', {
-              ...data?.displayConfig,
-              autoScroll: checked
-            })}
-          />
-        </Form.Item>
-
-        <Form.Item
-          label={t('nodeDetail.config.showTimestamp')}
-          help={t('nodeDetail.config.showTimestampHelp')}
-        >
-          <Switch
-            checked={data?.displayConfig?.showTimestamp === true}
-            onChange={(checked) => onChange('displayConfig', {
-              ...data?.displayConfig,
-              showTimestamp: checked
-            })}
-          />
-        </Form.Item>
-      </Form>
-    </div>
+          <Form.Item
+            label={t('nodeDetail.config.showTimestamp')}
+            help={t('nodeDetail.config.showTimestampHelp')}
+          >
+            <Switch
+              checked={data?.displayConfig?.showTimestamp === true}
+              onChange={(checked) => onChange('displayConfig', {
+                ...data?.displayConfig,
+                showTimestamp: checked
+              })}
+            />
+          </Form.Item>
+        </Form>
+      </div>
+    </>
   );
 
   // 渲染通用配置

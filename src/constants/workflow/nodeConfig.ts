@@ -10,7 +10,8 @@ import {
   StandardWorkflowNode,
   InputNodeData,
   AgentNodeData,
-  OutputNodeData
+  OutputNodeData,
+  InputMergeStrategy
 } from '@/types/workflow/nodeTypes';
 
 // 节点分类配置
@@ -104,6 +105,11 @@ export const createOutputNode = (id: string, position: { x: number; y: number })
       nodeType: NodeType.OUTPUT,
       description: config.description,
       inputValue: '',
+      multiInputConfig: {
+        strategy: InputMergeStrategy.CONCAT,
+        separator: '\n',
+        enabled: false  // 默认禁用，保持兼容性
+      },
       displayConfig: {
         format: 'text',
         template: ''

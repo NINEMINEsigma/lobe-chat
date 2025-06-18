@@ -190,6 +190,38 @@ const NodeOutputPanel: React.FC<NodeOutputPanelProps> = memo(({
     return data?.outputValue || null;
   };
 
+  // 获取多输入信息
+  const getMultiInputInfo = () => {
+    const currentNodeType = getNodeType(node);
+    if (currentNodeType !== 'output') return null;
+
+    const multiInputConfig = data?.multiInputConfig;
+    if (!multiInputConfig?.enabled) return null;
+
+    const inputConnectionCount = node.data?.inputConnections?.length || 0;
+
+    return {
+      enabled: true,
+      strategy: multiInputConfig.strategy,
+      separator: multiInputConfig.separator,
+      template: multiInputConfig.template,
+      inputCount: inputConnectionCount,
+      strategyLabel: getStrategyLabel(multiInputConfig.strategy)
+    };
+  };
+
+  // 获取策略标签
+  const getStrategyLabel = (strategy: string) => {
+    const strategyMap = {
+      'concat': '字符串拼接',
+      'array': '数组合并',
+      'first': '使用第一个',
+      'last': '使用最后一个',
+      'template': '模板替换'
+    };
+    return strategyMap[strategy as keyof typeof strategyMap] || strategy;
+  };
+
   // 获取执行状态
   const getExecutionStatus = () => {
     if (executionContext?.executionHistory?.[node.id]) {
@@ -234,6 +266,7 @@ const NodeOutputPanel: React.FC<NodeOutputPanelProps> = memo(({
   const currentOutputData = getCurrentOutputData();
   const executionStatus = getExecutionStatus();
   const connectionStatus = getOutputConnectionStatus();
+  const multiInputInfo = getMultiInputInfo();
 
   // 计算输出质量指标
   const getOutputMetrics = () => {
@@ -290,6 +323,48 @@ const NodeOutputPanel: React.FC<NodeOutputPanelProps> = memo(({
                 </Text>
               </div>
             </Descriptions.Item>
+
+            {/* 多输入信息 */}
+            {multiInputInfo && (
+              <>
+                <Descriptions.Item label="多输入处理">
+                  <Tag color="blue">已启用</Tag>
+                </Descriptions.Item>
+                <Descriptions.Item label="合并策略">
+                  <Tag color="purple">{multiInputInfo.strategyLabel}</Tag>
+                </Descriptions.Item>
+                <Descriptions.Item label="输入连接数">
+                  <Tag color={multiInputInfo.inputCount > 1 ? 'green' : 'orange'}>
+                    {multiInputInfo.inputCount} 个连接
+                  </Tag>
+                </Descriptions.Item>
+                {multiInputInfo.strategy === 'concat' && multiInputInfo.separator && (
+                  <Descriptions.Item label="分隔符">
+                    <code style={{
+                      background: '#f5f5f5',
+                      padding: '2px 4px',
+                      borderRadius: '2px',
+                      fontSize: '12px'
+                    }}>
+                      {multiInputInfo.separator.replace(/\n/g, '\\n').replace(/\t/g, '\\t')}
+                    </code>
+                  </Descriptions.Item>
+                )}
+                {multiInputInfo.strategy === 'template' && multiInputInfo.template && (
+                  <Descriptions.Item label="模板">
+                    <code style={{
+                      background: '#f5f5f5',
+                      padding: '2px 4px',
+                      borderRadius: '2px',
+                      fontSize: '12px',
+                      wordBreak: 'break-all'
+                    }}>
+                      {multiInputInfo.template}
+                    </code>
+                  </Descriptions.Item>
+                )}
+              </>
+            )}
           </Descriptions>
         </Card>
 

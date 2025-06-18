@@ -48,10 +48,28 @@ export interface AgentNodeData extends BaseNodeData {
   };
 }
 
+// 多输入合并策略枚举 (从multiInputCollector导入)
+export enum InputMergeStrategy {
+  CONCAT = 'concat',           // 字符串拼接
+  ARRAY = 'array',            // 数组合并
+  FIRST = 'first',            // 使用第一个输入
+  LAST = 'last',              // 使用最后一个输入
+  TEMPLATE = 'template'       // 模板替换
+}
+
+// 多输入配置接口
+export interface MultiInputConfig {
+  strategy: InputMergeStrategy;
+  separator?: string;          // 拼接分隔符
+  template?: string;           // 模板字符串
+  enabled: boolean;            // 是否启用多输入
+}
+
 // 输出节点数据
 export interface OutputNodeData extends BaseNodeData {
   nodeType: NodeType.OUTPUT;
-  inputValue?: string;
+  inputValue?: string;         // 保持向后兼容
+  multiInputConfig?: MultiInputConfig;  // 新增多输入配置
   displayConfig?: {
     format?: 'text' | 'markdown' | 'json';
     template?: string;

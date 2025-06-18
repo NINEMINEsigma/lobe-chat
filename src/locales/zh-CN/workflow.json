@@ -1,0 +1,196 @@
+{
+  "multiInput": {
+    "title": "多输入配置",
+    "enable": "启用多输入处理",
+    "enableTooltip": "启用后可以处理来自多个节点的输入数据",
+    "notice": "注意",
+    "noticeText": "多输入功能会自动收集所有连接到此节点的输入数据。如果只有一个输入连接，将自动使用单输入模式。",
+    "strategy": {
+      "title": "合并策略",
+      "concat": "字符串拼接",
+      "concatDesc": "将多个输入用分隔符连接成一个字符串",
+      "array": "数组合并",
+      "arrayDesc": "将多个输入合并为JSON数组格式",
+      "first": "使用第一个",
+      "firstDesc": "只使用第一个输入，忽略其他输入",
+      "last": "使用最后一个",
+      "lastDesc": "只使用最后一个输入，忽略其他输入",
+      "template": "模板替换",
+      "templateDesc": "使用自定义模板处理多个输入"
+    },
+    "separator": "分隔符",
+    "separatorPlaceholder": "输入分隔符，如 \\n 或 , ",
+    "separatorHelper": "支持转义字符：\\n (换行)、\\t (制表符)",
+    "template": "模板字符串",
+    "templatePlaceholder": "输入模板，如：第一个输入：{{0}}，第二个输入：{{1}}",
+    "templateHelper": "支持的占位符：",
+    "templateHelperIndex": "按索引引用输入",
+    "templateHelperAll": "所有输入（换行分隔）",
+    "templateHelperCount": "输入数量"
+  },
+  "nodeDetail": {
+    "title": "节点详情",
+    "tabs": {
+      "basic": "基础信息",
+      "input": "输入",
+      "output": "输出",
+      "config": "配置"
+    },
+    "basic": {
+      "title": "节点信息",
+      "id": "ID",
+      "type": "类型",
+      "status": "状态",
+      "position": "位置",
+      "connections": "连接",
+      "inputConnections": "输入连接",
+      "outputConnections": "输出连接"
+    },
+    "input": {
+      "title": "输入参数",
+      "noInputs": "此节点没有输入参数",
+      "specification": "输入规格",
+      "parameters": "参数",
+      "currentData": "当前数据"
+    },
+    "output": {
+      "title": "输出参数",
+      "specification": "输出规格",
+      "parameters": "参数",
+      "currentData": "当前数据",
+      "hasOutputPort": "有输出端口",
+      "dataType": "数据类型",
+      "connectionStatus": "连接状态",
+      "outputNodeNoConnection": "输出节点无需连接",
+      "connectionActive": "连接已激活",
+      "noConnection": "无连接",
+      "dataPreview": "数据预览",
+      "characters": "字符",
+      "words": "单词",
+      "lines": "行数",
+      "size": "大小",
+      "noOutputData": "暂无输出数据",
+      "notExecuted": "节点尚未执行",
+      "exampleData": "示例数据",
+      "downstreamNodes": "下游节点",
+      "connectedTo": "连接到",
+      "nodes": "个节点",
+      "noDownstreamConnections": "无下游连接",
+      "noDownstreamConnectionsDesc": "此节点没有连接到其他节点"
+    },
+    "config": {
+      "title": "节点配置",
+      "inputConfig": "输入配置",
+      "agentConfig": "智能体配置",
+      "outputConfig": "输出配置",
+      "generalConfig": "通用配置",
+      "placeholder": "占位符",
+      "placeholderHelp": "用户输入时显示的提示文本",
+      "placeholderExample": "请输入内容...",
+      "defaultValue": "默认值",
+      "defaultValueHelp": "节点的默认输入值",
+      "defaultValueExample": "默认输入内容",
+      "validation": "验证",
+      "validationHelp": "输入验证规则",
+      "required": "必填",
+      "temperature": "温度",
+      "temperatureHelp": "控制AI回答的随机性，值越高回答越随机",
+      "maxTokens": "最大Token数",
+      "maxTokensHelp": "限制AI回答的最大长度",
+      "systemPrompt": "系统提示",
+      "systemPromptHelp": "给AI的系统级指令",
+      "systemPromptExample": "你是一个专业的助手...",
+      "displayFormat": "显示格式",
+      "displayFormatHelp": "输出内容的显示格式",
+      "formats": {
+        "text": "纯文本",
+        "markdown": "Markdown",
+        "json": "JSON",
+        "code": "代码"
+      },
+      "featureComingSoon": "此功能即将推出",
+      "autoScroll": "自动滚动",
+      "autoScrollHelp": "输出内容时自动滚动到底部",
+      "showTimestamp": "显示时间戳",
+      "showTimestampHelp": "在输出内容中显示时间戳",
+      "nodeName": "节点名称",
+      "nodeNameHelp": "自定义节点的显示名称",
+      "nodeNameExample": "我的节点",
+      "description": "描述",
+      "descriptionHelp": "节点的详细描述",
+      "descriptionExample": "这是一个示例节点",
+      "enabled": "启用",
+      "enabledHelp": "是否启用此节点",
+      "debugMode": "调试模式",
+      "debugModeHelp": "启用调试模式以查看详细信息",
+      "preview": "配置预览",
+      "previewDescription": "当前节点的配置信息预览",
+      "configTips": "配置提示",
+      "configTipsDescription": "修改配置后请保存以应用更改。某些配置可能需要重新执行工作流才能生效。"
+    }
+  },
+  "nodeTypes": {
+    "input": {
+      "description": "接收用户输入文本",
+      "capabilities": {
+        "userInput": "用户输入",
+        "textOutput": "文本输出"
+      },
+      "inputSpec": {
+        "description": "输入节点无需输入连接"
+      },
+      "outputSpec": {
+        "description": "输出用户输入的文本内容",
+        "userInputParam": "用户输入的文本"
+      }
+    },
+    "agent": {
+      "description": "智能体代理处理",
+      "capabilities": {
+        "textProcessing": "文本处理",
+        "aiGeneration": "AI生成"
+      },
+      "inputSpec": {
+        "description": "接收文本输入进行AI处理",
+        "textParam": "输入文本"
+      },
+      "outputSpec": {
+        "description": "输出AI处理后的结果",
+        "responseParam": "AI回答"
+      }
+    },
+    "output": {
+      "description": "输出最终结果",
+      "capabilities": {
+        "resultDisplay": "结果展示",
+        "finalOutput": "最终输出"
+      },
+      "inputSpec": {
+        "description": "接收要输出到会话的内容",
+        "contentParam": "要输出的内容"
+      },
+      "outputSpec": {
+        "description": "输出节点作为终端，无输出端口"
+      }
+    },
+    "unknown": {
+      "inputSpec": {
+        "description": "未知节点类型"
+      },
+      "outputSpec": {
+        "description": "未知输出规格"
+      }
+    }
+  },
+  "common": {
+    "yes": "是",
+    "no": "否",
+    "enabled": "启用",
+    "disabled": "禁用",
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "warning": "警告",
+    "info": "信息"
+  }
+}

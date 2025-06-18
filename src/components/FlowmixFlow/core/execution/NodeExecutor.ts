@@ -7,6 +7,7 @@ import { chatService } from '@/services/chat';
 import { useSessionStore } from '@/store/session';
 import { useAgentStore } from '@/store/agent';
 import { ChatMessage } from '@/types/message';
+import { InputMergeStrategy } from '@/utils/workflow/multiInputCollector';
 
 // 节点数据类型定义
 export interface InputNodeData {
@@ -33,6 +34,12 @@ export interface LLMNodeData {
 export interface OutputNodeData {
   nodeType: 'output';
   inputValue: string;
+  multiInputConfig?: {
+    strategy: InputMergeStrategy;
+    separator?: string;
+    template?: string;
+    enabled: boolean;
+  };
   // 🚀 FUTURE: 输出格式化配置
   // displayConfig?: {
   //   format?: 'text' | 'markdown' | 'json' | 'code';
@@ -49,6 +56,7 @@ export interface ExecutionContext {
   currentUserId: string;
   userInput: string;
   nodeOutputs: Map<string, any>;
+  edges?: any[];  // 工作流边信息，用于多输入处理
   error?: Error;
 }
 
@@ -185,16 +193,18 @@ export class NodeExecutor {
     try {
       console.log(`[NodeExecutor] 执行输出节点 ${nodeId}`);
 
+      // 检查是否启用多输入
+      if (nodeData.multiInputConfig?.enabled) {
+        return await this.executeMultiInputOutput(nodeId, nodeData);
+      }
+
+      // 保持原有单输入逻辑
       const inputText = nodeData.inputValue;
       if (!inputText) {
         throw new Error('输出节点输入为空');
       }
 
-      // 输出节点将输入直接作为最终结果
-      // 🚀 FUTURE: 在这里可以添加格式化处理逻辑
       const output = inputText;
-
-      // 存储节点输出
       this.context.nodeOutputs.set(nodeId, output);
 
       console.log(`[NodeExecutor] 输出节点 ${nodeId} 执行完成，最终输出:`, output);
@@ -203,6 +213,49 @@ export class NodeExecutor {
       console.error(`[NodeExecutor] 输出节点 ${nodeId} 执行失败:`, error);
       this.context.error = error as Error;
       throw error;
+    }
+  }
+
+  /**
+   * 执行多输入输出节点
+   * 功能: 从多个源节点收集数据并合并
+   */
+  private async executeMultiInputOutput(nodeId: string, nodeData: OutputNodeData): Promise<string> {
+    try {
+      console.log(`[NodeExecutor] 执行多输入输出节点 ${nodeId}`);
+
+      // 动态导入多输入收集器以避免循环依赖
+      const { collectMultipleInputs, mergeInputData } = await import('@/utils/workflow/multiInputCollector');
+
+      // 收集多个输入数据
+      const collectionResult = await collectMultipleInputs(nodeId, this.context.edges || [], this.context.nodeOutputs);
+
+      if (!collectionResult.success) {
+        throw new Error(`多输入数据收集失败: ${collectionResult.error}`);
+      }
+
+      // 如果没有输入数据，回退到单输入模式
+      if (collectionResult.inputs.length === 0) {
+        const fallbackOutput = nodeData.inputValue || '';
+        this.context.nodeOutputs.set(nodeId, fallbackOutput);
+        return fallbackOutput;
+      }
+
+      // 合并输入数据
+      const mergedOutput = mergeInputData(collectionResult.inputs, nodeData.multiInputConfig!);
+
+      // 存储节点输出
+      this.context.nodeOutputs.set(nodeId, mergedOutput);
+
+      console.log(`[NodeExecutor] 多输入输出节点 ${nodeId} 执行完成，合并输出:`, mergedOutput);
+      return mergedOutput;
+    } catch (error) {
+      console.error(`[NodeExecutor] 多输入输出节点 ${nodeId} 执行失败:`, error);
+
+      // 发生错误时回退到单输入模式
+      const fallbackOutput = nodeData.inputValue || '';
+      this.context.nodeOutputs.set(nodeId, fallbackOutput);
+      return fallbackOutput;
     }
   }
 
