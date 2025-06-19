@@ -168,14 +168,9 @@ export class ParameterDiscoveryService {
       // 根据节点类型发现参数
       switch (nodeType) {
         case 'agent':
-          // Agent节点参数
-          parameters.push(
-            { name: 'prompt', type: 'string', required: true, description: '智能体提示词' },
-            { name: 'model', type: 'string', required: false, description: '使用的模型', enumValues: ['gpt-4', 'gpt-3.5-turbo', 'claude-3'] },
-            { name: 'temperature', type: 'number', required: false, defaultValue: 0.7, description: '生成温度' },
-            { name: 'maxTokens', type: 'number', required: false, defaultValue: 1000, description: '最大令牌数' },
-            { name: 'systemMessage', type: 'string', required: false, description: '系统消息' }
-          );
+          // AGENT节点参数通过 discoverInputParameters/discoverOutputParameters 正确发现
+          // 实际结构：输入参数 'text' (string)，输出参数 'response' (string)
+          // 不再使用硬编码参数定义，确保与真实节点结构一致
           break;
 
         case 'input':
