@@ -111,37 +111,21 @@ const WorkflowInner = memo<WorkflowProps>(({ id }) => {
     loadData();
   }, [id, loadWorkflow]);
 
-  // 将旧格式转换为新格式
+  // 加载工作流数据
   useEffect(() => {
     if (currentWorkflow) {
       console.log('[Workflow] 从store加载工作流数据:', {
-        hasNodes: 'nodes' in currentWorkflow,
         nodesCount: currentWorkflow.nodes?.length || 0,
-        sampleNode: currentWorkflow.nodes?.[0] || null,
-                nodesWithParameterMappings: currentWorkflow.nodes?.filter((node: any) =>
-          node.data?.parameterMappings && node.data.parameterMappings.length > 0
-        ).length || 0
+        edgesCount: currentWorkflow.edges?.length || 0
       });
 
-      // 如果是旧格式，转换为新格式
-      if ('nodes' in currentWorkflow && 'edges' in currentWorkflow) {
-        const flowData: LobeFlowData = {
-          nodes: (currentWorkflow.nodes || []) as any[],
-          edges: (currentWorkflow.edges || []) as any[],
-          viewport: { x: 0, y: 0, zoom: 1 }
-        };
+      const flowData: LobeFlowData = {
+        nodes: currentWorkflow.nodes as any[],
+        edges: currentWorkflow.edges as any[],
+        viewport: { x: 0, y: 0, zoom: 1 }
+      };
 
-        console.log('[Workflow] 转换后的FlowData:', {
-          nodesCount: flowData.nodes.length,
-          edgesCount: flowData.edges.length,
-                    nodesWithParameterMappings: flowData.nodes.filter((node: any) =>
-            node.data?.parameterMappings && node.data.parameterMappings.length > 0
-          ).length,
-          sampleNodeData: flowData.nodes[0]?.data || null
-        });
-
-        setWorkflowData(flowData);
-      }
+      setWorkflowData(flowData);
     }
   }, [currentWorkflow]);
 
@@ -149,18 +133,13 @@ const WorkflowInner = memo<WorkflowProps>(({ id }) => {
   const handleWorkflowChange = useCallback((data: LobeFlowData) => {
     console.log('[Workflow] 处理工作流更新:', {
       nodesCount: data.nodes?.length || 0,
-      edgesCount: data.edges?.length || 0,
-            nodesWithParameterMappings: data.nodes?.filter((node: any) =>
-        node.data?.parameterMappings && node.data.parameterMappings.length > 0
-      ).length || 0,
-      sampleNodeData: data.nodes?.[0]?.data || null
+      edgesCount: data.edges?.length || 0
     });
 
     setWorkflowData(data);
-    // 更新到store（转换回旧格式）
     updateWorkflow({
-      nodes: data.nodes as any[], // 临时类型转换
-      edges: data.edges as any[], // 临时类型转换
+      nodes: data.nodes as any,
+      edges: data.edges as any,
       version: '1.0'
     });
   }, [updateWorkflow]);
@@ -175,25 +154,22 @@ const WorkflowInner = memo<WorkflowProps>(({ id }) => {
     }
   }, [saveWorkflow]);
 
-  // 处理创建新工作流 - 使用统一的默认模板
+  // 处理创建新工作流
   const handleCreate = useCallback(() => {
-    // 使用统一的默认工作流模板创建函数
     const { nodes: defaultNodes, edges: defaultEdges } = createDefaultWorkflowTemplate();
-
-    // 确保新创建的模板也有正确的连接信息
     const { initializeWorkflowData } = require('@/utils/workflow/connectionSync');
     const { nodes: initializedNodes, edges: initializedEdges } = initializeWorkflowData(defaultNodes, defaultEdges);
 
     const newFlow: LobeFlowData = {
-      nodes: initializedNodes as any[],
-      edges: initializedEdges as any[],
+      nodes: initializedNodes,
+      edges: initializedEdges,
       viewport: { x: 0, y: 0, zoom: 1 }
     };
 
     setWorkflowData(newFlow);
     updateWorkflow({
-      nodes: initializedNodes as any[],
-      edges: initializedEdges as any[],
+      nodes: initializedNodes as any,
+      edges: initializedEdges as any,
       version: '1.0'
     });
     updateWorkflowMeta({
