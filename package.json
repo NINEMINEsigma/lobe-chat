@@ -1,7 +1,7 @@
 {
   "name": "@lobehub/chat",
   "version": "1.84.22",
-  "description": "Lobe Chat - an open-source, high-performance chatbot framework that supports speech synthesis, multimodal, and extensible Function Call plugin system. Supports one-click free deployment of your private ChatGPT/LLM web application.",
+  "description": "龙红 - 基于大模型的智能办公应用软件，支持语音合成、多模态交互和可扩展的功能调用插件系统。支持一键免费部署您的私有ChatGPT/LLM Web应用程序。",
   "keywords": [
     "framework",
     "chatbot",
