@@ -10,7 +10,7 @@ import { formatDescLength, formatTitleLength } from '@/utils/genOG';
 
 export class Meta {
   public generate({
-    description = '龙红 offers you the best ChatGPT, OLLaMA, Gemini, Claude WebUI user experience',
+    description = 'LobeChat offers you the best ChatGPT, OLLaMA, Gemini, Claude WebUI user experience',
     title,
     image = OG_URL,
     url,
@@ -122,7 +122,7 @@ export class Meta {
         },
       ],
       locale,
-      siteName: '龙红',
+      siteName: 'LobeChat',
       title,
       type,
       url,

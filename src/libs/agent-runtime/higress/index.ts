@@ -19,7 +19,7 @@ export const LobeHigressAI = LobeOpenAICompatibleFactory({
   constructorOptions: {
     defaultHeaders: {
       'HTTP-Referer': 'https://chat-preview.lobehub.com',
-      'X-Title': 'LobeChat',
+      'X-Title': 'Lobe Chat',
       'x-Request-Id': uniqueId('lobe-chat-'),
     },
   },

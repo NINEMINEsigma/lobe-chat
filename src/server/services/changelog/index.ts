@@ -36,7 +36,7 @@ export class ChangelogService {
     changelogPath: 'changelog',
     docsPath: 'docs/changelog',
     majorVersion: 1,
-    repo: 'longhong-chat',
+    repo: 'lobe-chat',
     type: 'cloud',
     urlTemplate: process.env.CHANGELOG_URL_TEMPLATE || URL_TEMPLATE,
     user: 'lobehub',

@@ -23,11 +23,11 @@ export const AUTHOR_LIST = {
     name: 'CanisMinor',
     url: 'https://github.com/arvinxx',
   },
-  longhong: {
+  lobehub: {
     avatar: 'https://avatars.githubusercontent.com/u/131470832?v=4',
     desc: 'Official Account',
-    name: '龙红',
-    url: 'https://github.com/NINEMINEsigma/lobe-chat.git',
+    name: 'LobeHub',
+    url: 'https://github.com/lobehub',
   },
 };
 
@@ -86,7 +86,7 @@ export class Ld {
     return {
       '@id': this.getId(OFFICIAL_URL, '#organization'),
       '@type': 'Organization',
-      'alternateName': '龙红',
+      'alternateName': 'LobeChat',
       'contactPoint': {
         '@type': 'ContactPoint',
         'contactType': 'customer support',
@@ -103,10 +103,11 @@ export class Ld {
         'url': urlJoin(OFFICIAL_SITE, '/icon-512x512.png'),
         'width': 512,
       },
-      'name': '龙红',
+      'name': 'LobeHub',
       'sameAs': [
         X,
-        'https://github.com/NINEMINEsigma/lobe-chat.git',
+        'https://github.com/lobehub',
+        'https://medium.com/@lobehub',
         'https://www.youtube.com/@lobehub',
       ],
       'url': OFFICIAL_SITE,
@@ -119,8 +120,8 @@ export class Ld {
       '@type': 'Organization',
     };
     if (!ids || ids.length === 0) return defaultAuthor;
-    if (ids.length === 1 && ids[0] === 'longhong') return defaultAuthor;
-    const personId = ids.find((id) => id !== 'longhong');
+    if (ids.length === 1 && ids[0] === 'lobehub') return defaultAuthor;
+    const personId = ids.find((id) => id !== 'lobehub');
     if (!personId) return defaultAuthor;
     const person = (AUTHOR_LIST as any)?.[personId];
     if (!person) return defaultAuthor;
