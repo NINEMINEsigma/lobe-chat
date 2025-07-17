@@ -1,15 +1,12 @@
-// import TopicListContent from './features/TopicListContent';
-import React, { Suspense, lazy } from 'react';
+import React from 'react';
 
 import { DynamicLayoutProps } from '@/types/next';
 import { RouteVariants } from '@/utils/server/routeVariants';
 
 import Desktop from './_layout/Desktop';
 import Mobile from './_layout/Mobile';
-import SkeletonList from './features/SkeletonList';
 import SystemRole from './features/SystemRole';
-
-const TopicContent = lazy(() => import('./features/TopicListContent'));
+import TopicContentWrapper from './features/TopicContentWrapper';
 
 const Topic = async (props: DynamicLayoutProps) => {
   const isMobile = await RouteVariants.getIsMobile(props);
@@ -20,9 +17,7 @@ const Topic = async (props: DynamicLayoutProps) => {
     <>
       {!isMobile && <SystemRole />}
       <Layout>
-        <Suspense fallback={<SkeletonList />}>
-          <TopicContent />
-        </Suspense>
+        <TopicContentWrapper />
       </Layout>
     </>
   );

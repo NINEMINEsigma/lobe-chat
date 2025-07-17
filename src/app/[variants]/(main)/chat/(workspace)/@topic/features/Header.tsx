@@ -6,6 +6,7 @@ import type { ItemType } from 'antd/es/menu/interface';
 import { LucideCheck, MoreHorizontal, Search, Trash } from 'lucide-react';
 import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'next/navigation';
 import { Flexbox } from 'react-layout-kit';
 
 import SidebarHeader from '@/components/SidebarHeader';
@@ -19,6 +20,8 @@ import TopicSearchBar from './TopicSearchBar';
 
 const Header = memo(() => {
   const { t } = useTranslation(['topic', 'common']);
+  const searchParams = useSearchParams();
+  const assistant = searchParams.get('assistant');
   const [topicLength, removeUnstarredTopic, removeAllTopic] = useChatStore((s) => [
     topicSelectors.currentTopicLength(s),
     s.removeUnstarredTopic,
@@ -102,7 +105,7 @@ const Header = memo(() => {
           </Dropdown>
         </>
       }
-      title={`${t('title')} ${topicLength > 1 ? topicLength + 1 : ''}`}
+      title={assistant === 'schedule' ? '日程' : `${t('title')} ${topicLength > 1 ? topicLength + 1 : ''}`}
     />
   );
 });
