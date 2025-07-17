@@ -59,6 +59,7 @@ const TopActions = memo<TopActionProps>(({ tab, isPinned }) => {
           />
         </Link>
       )}
+      {/* 在此处新增日程按钮，打开一个内置的会话助手，由这个会话助手来智能处理日程安排*/}
       {showMarket && (
         <Link aria-label={t('tab.discover')} href={'/discover'}>
           <ActionIcon
