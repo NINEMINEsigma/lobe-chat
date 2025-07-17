@@ -5,6 +5,7 @@ import { createStyles, useResponsive } from 'antd-style';
 import isEqual from 'fast-deep-equal';
 import { parseAsBoolean, useQueryState } from 'nuqs';
 import { PropsWithChildren, memo, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 import { withSuspense } from '@/components/withSuspense';
 import { FOLDER_WIDTH } from '@/const/layoutTokens';
@@ -36,6 +37,8 @@ const SessionPanel = memo<PropsWithChildren>(({ children }) => {
   const { md = true } = useResponsive();
 
   const [isPinned] = useQueryState('pinned', parseAsBoolean);
+  const searchParams = useSearchParams();
+  const assistant = searchParams.get('assistant');
 
   const { styles } = useStyles();
   const [sessionsWidth, sessionExpandable, updatePreference] = useGlobalStore((s) => [
@@ -47,6 +50,10 @@ const SessionPanel = memo<PropsWithChildren>(({ children }) => {
   const [cacheExpand, setCacheExpand] = useState<boolean>(Boolean(sessionExpandable));
   const [tmpWidth, setWidth] = useState(sessionsWidth);
   if (tmpWidth !== sessionsWidth) setWidth(sessionsWidth);
+
+  // 在日程模式下禁用面板展开
+  const isScheduleMode = assistant === 'schedule';
+  const isExpandable = !isPinned && !isScheduleMode;
 
   const handleExpand = (expand: boolean) => {
     if (isEqual(expand, sessionExpandable)) return;
@@ -75,7 +82,7 @@ const SessionPanel = memo<PropsWithChildren>(({ children }) => {
       defaultSize={{ width: tmpWidth }}
       // 当进入 pin 模式下，不可展开
       expand={!isPinned && sessionExpandable}
-      expandable={!isPinned}
+      expandable={isExpandable}
       maxWidth={400}
       minWidth={FOLDER_WIDTH}
       mode={md ? 'fixed' : 'float'}

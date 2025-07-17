@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 
+import { useGlobalStore } from '@/store/global';
 import { useSessionStore } from '@/store/session';
 import { sessionSelectors } from '@/store/session/selectors';
 import { LobeAgentSession } from '@/types/session';
@@ -15,9 +16,13 @@ const ScheduleAssistant = () => {
   const createSession = useSessionStore((s) => s.createSession);
   const switchSession = useSessionStore((s) => s.switchSession);
   const sessions = useSessionStore((s) => s.sessions);
+  const updateSystemStatus = useGlobalStore((s) => s.updateSystemStatus);
 
   useEffect(() => {
     if (assistant === 'schedule') {
+      // 在日程模式下隐藏助手面板
+      updateSystemStatus({ showSessionPanel: false });
+      
       // 检查是否已存在schedule助手会话
       const existingSession = sessions.find((session: LobeAgentSession) => 
         session.meta?.title === '日程安排助手' || 
@@ -76,8 +81,11 @@ const ScheduleAssistant = () => {
           },
         });
       }
+    } else {
+      // 如果不是日程模式，恢复助手面板显示
+      updateSystemStatus({ showSessionPanel: true });
     }
-  }, [assistant, createSession, switchSession, sessions]);
+  }, [assistant, createSession, switchSession, sessions, updateSystemStatus]);
 
   return null;
 };

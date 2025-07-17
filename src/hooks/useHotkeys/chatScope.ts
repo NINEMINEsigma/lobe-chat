@@ -2,6 +2,7 @@ import isEqual from 'fast-deep-equal';
 import { parseAsBoolean, useQueryState } from 'nuqs';
 import { useEffect } from 'react';
 import { useHotkeysContext } from 'react-hotkeys-hook';
+import { useSearchParams } from 'next/navigation';
 
 import { useClearCurrentMessages } from '@/features/ChatInput/ActionBar/Clear';
 import { useSendMessage } from '@/features/ChatInput/useSend';
@@ -51,6 +52,11 @@ export const useToggleLeftPanelHotkey = () => {
   const [isPinned] = useQueryState('pinned', parseAsBoolean);
   const showSessionPanel = useGlobalStore(systemStatusSelectors.showSessionPanel);
   const updateSystemStatus = useGlobalStore((s) => s.updateSystemStatus);
+  const searchParams = useSearchParams();
+  const assistant = searchParams.get('assistant');
+
+  // 在日程模式下禁用快捷键
+  const isScheduleMode = assistant === 'schedule';
 
   return useHotkeyById(
     HotkeyEnum.ToggleLeftPanel,
@@ -60,7 +66,7 @@ export const useToggleLeftPanelHotkey = () => {
         showSessionPanel: !showSessionPanel,
       }),
     {
-      enabled: !isZenMode && !isPinned,
+      enabled: !isZenMode && !isPinned && !isScheduleMode,
     },
   );
 };

@@ -15,7 +15,7 @@ import { useHotkeyById } from './useHotkeyById';
 
 export const useSwitchAgentHotkey = () => {
   const { showPinList } = useServerConfigStore(featureFlagsSelectors);
-  const list = useSessionStore(sessionSelectors.pinnedSessions, isEqual);
+  const list = useSessionStore(sessionSelectors.pinnedSessionsFiltered, isEqual);
   const hotkey = useUserStore(settingsSelectors.getHotkeyById(HotkeyEnum.SwitchAgent));
   const switchSession = useSwitchSession();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

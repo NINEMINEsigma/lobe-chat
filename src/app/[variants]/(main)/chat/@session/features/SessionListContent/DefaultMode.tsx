@@ -29,9 +29,9 @@ const DefaultMode = memo(() => {
 
   useFetchSessions();
 
-  const defaultSessions = useSessionStore(sessionSelectors.defaultSessions, isEqual);
+  const defaultSessions = useSessionStore(sessionSelectors.defaultSessionsFiltered, isEqual);
   const customSessionGroups = useSessionStore(sessionSelectors.customSessionGroups, isEqual);
-  const pinnedSessions = useSessionStore(sessionSelectors.pinnedSessions, isEqual);
+  const pinnedSessions = useSessionStore(sessionSelectors.pinnedSessionsFiltered, isEqual);
 
   const [sessionGroupKeys, updateSystemStatus] = useGlobalStore((s) => [
     systemStatusSelectors.sessionGroupKeys(s),
@@ -49,7 +49,7 @@ const DefaultMode = memo(() => {
             label: t('pin'),
           },
         ...(customSessionGroups || []).map(({ id, name, children }) => ({
-          children: <SessionList dataSource={children} groupId={id} />,
+          children: <SessionList dataSource={children.filter(session => session.meta?.title !== '日程安排助手')} groupId={id} />,
           extra: (
             <Actions
               id={id}

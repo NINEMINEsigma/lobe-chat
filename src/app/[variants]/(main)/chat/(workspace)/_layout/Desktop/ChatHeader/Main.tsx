@@ -7,6 +7,7 @@ import { parseAsBoolean, useQueryState } from 'nuqs';
 import { Suspense, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Flexbox } from 'react-layout-kit';
+import { useSearchParams } from 'next/navigation';
 
 import { useInitAgentConfig } from '@/hooks/useInitAgentConfig';
 import { useOpenChatSettings } from '@/hooks/useInterceptingRoutes';
@@ -45,6 +46,8 @@ const Main = memo<{ className?: string }>(({ className }) => {
   const { styles } = useStyles();
   useInitAgentConfig();
   const [isPinned] = useQueryState('pinned', parseAsBoolean);
+  const searchParams = useSearchParams();
+  const assistant = searchParams.get('assistant');
 
   const [init, isInbox, title, avatar, backgroundColor] = useSessionStore((s) => [
     sessionSelectors.isSomeSessionActive(s),
@@ -59,10 +62,14 @@ const Main = memo<{ className?: string }>(({ className }) => {
   const displayTitle = isInbox ? t('inbox.title') : title;
   const showSessionPanel = useGlobalStore(systemStatusSelectors.showSessionPanel);
 
+  // 在日程模式下隐藏TogglePanelButton
+  const isScheduleMode = assistant === 'schedule';
+  const shouldShowToggleButton = !isPinned && !showSessionPanel && !isScheduleMode;
+
   if (!init)
     return (
       <Flexbox align={'center'} className={className} gap={8} horizontal>
-        {!isPinned && !showSessionPanel && <TogglePanelButton />}
+        {shouldShowToggleButton && <TogglePanelButton />}
         <Skeleton
           active
           avatar={{ shape: 'circle', size: 28 }}
@@ -74,7 +81,7 @@ const Main = memo<{ className?: string }>(({ className }) => {
 
   return (
     <Flexbox align={'center'} className={className} gap={12} horizontal>
-      {!isPinned && !showSessionPanel && <TogglePanelButton />}
+      {shouldShowToggleButton && <TogglePanelButton />}
       <Avatar
         avatar={avatar}
         background={backgroundColor}

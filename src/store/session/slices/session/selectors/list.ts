@@ -9,6 +9,17 @@ const defaultSessions = (s: SessionStore): LobeSessions => s.defaultSessions;
 const pinnedSessions = (s: SessionStore): LobeSessions => s.pinnedSessions;
 const customSessionGroups = (s: SessionStore): CustomSessionGroup[] => s.customSessionGroups;
 
+// 过滤掉日程安排助手的会话
+const filterScheduleAssistant = (sessions: LobeSessions): LobeSessions => {
+  return sessions.filter(session => {
+    const title = session.meta?.title;
+    return title !== '日程安排助手';
+  });
+};
+
+const defaultSessionsFiltered = (s: SessionStore): LobeSessions => filterScheduleAssistant(s.defaultSessions);
+const pinnedSessionsFiltered = (s: SessionStore): LobeSessions => filterScheduleAssistant(s.pinnedSessions);
+
 const allSessions = (s: SessionStore): LobeSessions => s.sessions;
 
 const getSessionById =
@@ -49,6 +60,7 @@ export const sessionSelectors = {
   currentSessionSafe,
   customSessionGroups,
   defaultSessions,
+  defaultSessionsFiltered,
   getSessionById,
   getSessionMetaById,
   hasCustomAgents,
@@ -56,4 +68,5 @@ export const sessionSelectors = {
   isSessionListInit,
   isSomeSessionActive,
   pinnedSessions,
+  pinnedSessionsFiltered,
 };

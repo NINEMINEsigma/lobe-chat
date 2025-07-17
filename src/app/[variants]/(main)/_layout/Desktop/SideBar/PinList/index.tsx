@@ -66,7 +66,7 @@ const useStyles = createStyles(({ css, token }) => ({
 
 const PinList = () => {
   const { styles, cx } = useStyles();
-  const list = useSessionStore(sessionSelectors.pinnedSessions, isEqual);
+  const list = useSessionStore(sessionSelectors.pinnedSessionsFiltered, isEqual);
   const [activeId] = useSessionStore((s) => [s.activeId]);
   const switchSession = useSwitchSession();
   const hotkey = useUserStore(settingsSelectors.getHotkeyById(HotkeyEnum.SwitchAgent));
