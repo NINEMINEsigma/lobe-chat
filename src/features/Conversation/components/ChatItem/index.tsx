@@ -177,6 +177,9 @@ const Item = memo<ChatListItemProps>(
         enableCustomFootnotes: item?.role === 'assistant',
         rehypePlugins: item?.role === 'user' ? undefined : rehypePlugins,
         remarkPlugins: item?.role === 'user' ? undefined : remarkPlugins,
+        // Remove showCitations from markdownProps as it's not a valid DOM attribute
+        // The citation display logic should be handled internally by the Markdown component
+        /*
         showCitations:
           item?.role === 'user'
             ? undefined
@@ -185,6 +188,7 @@ const Item = memo<ChatListItemProps>(
               item?.search?.citations.length > 0 &&
               // if the citations's url and title are all the same, we should not show the citations
               item?.search?.citations.every((item) => item.title !== item.url),
+        */
       }),
       [components, markdownCustomRender, item?.role, item?.search],
     );

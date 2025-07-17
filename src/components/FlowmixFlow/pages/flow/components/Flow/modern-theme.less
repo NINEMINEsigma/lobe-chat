@@ -1,0 +1,209 @@
+// 现代化主题样式
+.modern-flow-theme {
+  // 全局变量
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --success-gradient: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  --warning-gradient: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+  --danger-gradient: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+  --dark-gradient: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+
+  --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 8px 25px rgba(0, 0, 0, 0.15);
+  --shadow-heavy: 0 12px 35px rgba(0, 0, 0, 0.2);
+
+  --border-radius: 12px;
+  --border-radius-small: 8px;
+  --border-radius-large: 16px;
+
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // 背景样式
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+
+  // ReactFlow容器样式
+  .react-flow {
+    background: transparent;
+  }
+
+  // 节点通用样式增强
+  .react-flow__node {
+    transition: var(--transition);
+
+    &:hover {
+      transform: translateY(-2px);
+      z-index: 1000;
+    }
+
+    &.selected {
+      box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.5);
+    }
+  }
+
+  // 边的样式增强
+  .react-flow__edge {
+    &.selected {
+      .react-flow__edge-path {
+        stroke: #667eea;
+        stroke-width: 3;
+        filter: drop-shadow(0 2px 4px rgba(102, 126, 234, 0.3));
+      }
+    }
+
+    .react-flow__edge-path {
+      transition: var(--transition);
+      stroke: #94a3b8;
+      stroke-width: 2;
+
+      &:hover {
+        stroke: #667eea;
+        stroke-width: 3;
+      }
+    }
+  }
+
+  // 控制面板样式
+  .react-flow__controls {
+    background: rgba(255, 255, 255, 0.95);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-light);
+
+    .react-flow__controls-button {
+      background: transparent;
+      border: none;
+      color: #4a5568;
+      transition: var(--transition);
+
+      &:hover {
+        background: rgba(102, 126, 234, 0.1);
+        color: #667eea;
+        transform: scale(1.05);
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+  }
+
+  // 小地图样式
+  .react-flow__minimap {
+    background: rgba(255, 255, 255, 0.95);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-light);
+
+    .react-flow__minimap-mask {
+      fill: rgba(102, 126, 234, 0.1);
+      stroke: rgba(102, 126, 234, 0.3);
+      stroke-width: 2;
+    }
+  }
+
+  // 背景网格样式
+  .react-flow__background {
+    .react-flow__background-pattern {
+      color: rgba(148, 163, 184, 0.3);
+    }
+  }
+
+  // 深色主题
+  &.dark-theme {
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+
+    .react-flow__controls {
+      background: rgba(45, 55, 72, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+
+      .react-flow__controls-button {
+        color: #e2e8f0;
+
+        &:hover {
+          background: rgba(102, 126, 234, 0.2);
+          color: #a78bfa;
+        }
+      }
+    }
+
+    .react-flow__minimap {
+      background: rgba(45, 55, 72, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+
+      .react-flow__minimap-mask {
+        fill: rgba(167, 139, 250, 0.1);
+        stroke: rgba(167, 139, 250, 0.3);
+      }
+    }
+
+    .react-flow__background {
+      .react-flow__background-pattern {
+        color: rgba(148, 163, 184, 0.1);
+      }
+    }
+
+    .react-flow__edge {
+      .react-flow__edge-path {
+        stroke: #64748b;
+
+        &:hover {
+          stroke: #a78bfa;
+        }
+      }
+
+      &.selected {
+        .react-flow__edge-path {
+          stroke: #a78bfa;
+          filter: drop-shadow(0 2px 4px rgba(167, 139, 250, 0.3));
+        }
+      }
+    }
+  }
+
+  // 节点连接点样式
+  .react-flow__handle {
+    width: 12px;
+    height: 12px;
+    border: 2px solid #667eea;
+    background: #ffffff;
+    border-radius: 50%;
+    transition: var(--transition);
+
+    &:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+    }
+
+    &.react-flow__handle-connecting {
+      background: #667eea;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.3);
+    }
+  }
+
+  // 选择框样式
+  .react-flow__selection {
+    background: rgba(102, 126, 234, 0.1);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+  }
+
+  // 连接线样式
+  .react-flow__connectionline {
+    stroke: #667eea;
+    stroke-width: 2;
+    stroke-dasharray: 5, 5;
+    animation: dash 1s linear infinite;
+  }
+
+  @keyframes dash {
+    to {
+      stroke-dashoffset: -10;
+    }
+  }
+}

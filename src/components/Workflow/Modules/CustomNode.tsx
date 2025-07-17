@@ -38,7 +38,7 @@ const CustomNode = memo(({ data }: CustomNodeProps) => {
   const { t } = useTranslation('common');
 
   return (
-    <Card className={styles.card} bodyStyle={{ padding: '12px' }}>
+          <Card className={styles.card} styles={{ body: { padding: '12px' } }}>
       <Handle
         type="target"
         position={Position.Top}

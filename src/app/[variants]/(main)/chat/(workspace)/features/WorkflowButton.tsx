@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 
 import { useSessionStore } from '@/store/session';
 import { useAgentStore } from '@/store/agent';
+import { INBOX_SESSION_ID } from '@/const/session';
 
 import { Workflow } from 'lucide-react';
 
@@ -18,11 +19,14 @@ const AgentWorkflow = dynamic(() => import('./AgentWorkflow'), {
 
 const WorkflowButton = memo<{ mobile?: boolean }>(({ mobile }) => {
   const { t } = useTranslation('common');
-  
+
   const id = useSessionStore((s) => s.activeId);
 
+  const isInbox = id === INBOX_SESSION_ID;
   return (
     <>
+    {isInbox == false ?
+      <>
       <ActionIcon
         icon={Workflow}
         onClick={() => /* Project-Label Workflow */useAgentStore.setState({ showAgentWorkflow: true })}
@@ -30,6 +34,9 @@ const WorkflowButton = memo<{ mobile?: boolean }>(({ mobile }) => {
         title={t('editWorkflow')}
       />
       <AgentWorkflow key={id} />
+      </>
+      : <></>
+    }
     </>
   );
 });
