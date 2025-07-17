@@ -1,6 +1,7 @@
 import { CollapseProps } from 'antd';
 import isEqual from 'fast-deep-equal';
 import { memo, useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 
 import { useFetchSessions } from '@/hooks/useFetchSessions';
@@ -19,6 +20,8 @@ import RenameGroupModal from './Modals/RenameGroupModal';
 
 const DefaultMode = memo(() => {
   const { t } = useTranslation('chat');
+  const searchParams = useSearchParams();
+  const assistant = searchParams.get('assistant');
 
   const [activeGroupId, setActiveGroupId] = useState<string>();
   const [renameGroupModalOpen, setRenameGroupModalOpen] = useState(false);
@@ -70,6 +73,11 @@ const DefaultMode = memo(() => {
       ].filter(Boolean) as CollapseProps['items'],
     [t, customSessionGroups, pinnedSessions, defaultSessions],
   );
+
+  // 如果是schedule助手模式，隐藏会话列表
+  if (assistant === 'schedule') {
+    return null;
+  }
 
   return (
     <>

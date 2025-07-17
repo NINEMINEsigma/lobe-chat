@@ -29,6 +29,7 @@ const TopActions = memo<TopActionProps>(({ tab, isPinned }) => {
   const isChatActive = tab === SidebarTabKey.Chat && !isPinned;
   const isFilesActive = tab === SidebarTabKey.Files;
   const isDiscoverActive = tab === SidebarTabKey.Discover;
+  const isScheduleActive = tab === SidebarTabKey.Schedule;
 
   return (
     <Flexbox gap={8}>
@@ -59,9 +60,9 @@ const TopActions = memo<TopActionProps>(({ tab, isPinned }) => {
           />
         </Link>
       )}
-      {/* 在此处新增日程按钮，打开一个内置的会话助手，由这个会话助手来智能处理日程安排*/}
-      <Link aria-label={t('tab.schedule')} href={'/chat/schedule'}>
+      <Link aria-label={t('tab.schedule')} href={'/chat?assistant=schedule'}>
         <ActionIcon
+          active={isScheduleActive}
           icon={Calendar}
           size={ICON_SIZE}
           title={t('tab.schedule')}

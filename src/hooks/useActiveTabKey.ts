@@ -1,4 +1,4 @@
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 import { ProfileTabs, SettingsTabs, SidebarTabKey } from '@/store/global/initialState';
 
@@ -7,8 +7,17 @@ import { ProfileTabs, SettingsTabs, SidebarTabKey } from '@/store/global/initial
  */
 export const useActiveTabKey = () => {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const assistant = searchParams.get('assistant');
 
-  return pathname.split('/').find(Boolean)! as SidebarTabKey;
+  const baseTab = pathname.split('/').find(Boolean)! as SidebarTabKey;
+  
+  // 如果是chat页面且有assistant=schedule参数，返回Schedule
+  if (baseTab === SidebarTabKey.Chat && assistant === 'schedule') {
+    return SidebarTabKey.Schedule;
+  }
+
+  return baseTab;
 };
 
 /**

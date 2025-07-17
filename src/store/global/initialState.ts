@@ -12,6 +12,7 @@ export enum SidebarTabKey {
   Files = 'files',
   Me = 'me',
   Setting = 'settings',
+  Schedule = 'schedule',
 }
 
 export enum ChatSettingsTabs {

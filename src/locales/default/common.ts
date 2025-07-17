@@ -324,6 +324,7 @@ export default {
     files: '文件',
     me: '我',
     setting: '设置',
+    schedule: '日程安排',
   },
   telemetry: {
     allow: '允许',

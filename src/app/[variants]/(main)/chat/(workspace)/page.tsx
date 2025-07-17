@@ -12,6 +12,7 @@ import { RouteVariants } from '@/utils/server/routeVariants';
 
 import PageTitle from '../features/PageTitle';
 import Changelog from './features/ChangelogModal';
+import ScheduleAssistant from './features/ScheduleAssistant';
 import TelemetryNotification from './features/TelemetryNotification';
 
 export const generateMetadata = async (props: DynamicLayoutProps) => {
@@ -39,6 +40,7 @@ const Page = async (props: DynamicLayoutProps) => {
       <StructuredData ld={ld} />
       <PageTitle />
       <TelemetryNotification mobile={isMobile} />
+      <ScheduleAssistant />
       {!isDesktop && showChangelog && !hideDocs && !isMobile && (
         <Suspense>
           <Changelog />
