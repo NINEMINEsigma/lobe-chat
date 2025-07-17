@@ -1,5 +1,5 @@
 import { ActionIcon, ActionIconProps } from '@lobehub/ui';
-import { Compass, FolderClosed, MessageSquare } from 'lucide-react';
+import { Compass, FolderClosed, MessageSquare, Calendar } from 'lucide-react';
 import Link from 'next/link';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -60,6 +60,14 @@ const TopActions = memo<TopActionProps>(({ tab, isPinned }) => {
         </Link>
       )}
       {/* 在此处新增日程按钮，打开一个内置的会话助手，由这个会话助手来智能处理日程安排*/}
+      <Link aria-label={t('tab.schedule')} href={'/chat/schedule'}>
+        <ActionIcon
+          icon={Calendar}
+          size={ICON_SIZE}
+          title={t('tab.schedule')}
+          tooltipProps={{ placement: 'right' }}
+        />
+      </Link>
       {showMarket && (
         <Link aria-label={t('tab.discover')} href={'/discover'}>
           <ActionIcon
