@@ -28,7 +28,7 @@ const Footer = memo<PropsWithChildren>(() => {
   const [openFeedback, setOpenFeedback] = useState(false);
   const { styles } = useStyles();
 
-  const { hideGitHub } = useServerConfigStore(featureFlagsSelectors);
+  const hideGitHub = true;
 
   return hideGitHub ? null : (
     <>

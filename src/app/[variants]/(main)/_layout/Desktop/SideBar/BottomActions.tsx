@@ -16,7 +16,8 @@ const ICON_SIZE: ActionIconProps['size'] = {
 
 const BottomActions = memo(() => {
   const { t } = useTranslation('common');
-  const { hideGitHub, hideDocs } = useServerConfigStore(featureFlagsSelectors);
+  const hideDocs = true;
+  const hideGitHub = true;
 
   return (
     <Flexbox gap={8}>
